@@ -1,9 +1,10 @@
 ﻿using System.Net;
-using Irrelephant.Outcast.Protocol.Encoding;
+using Irrelephant.Outcast.Protocol.DataTransfer.Encoding;
+using Microsoft.Extensions.Logging;
 
 namespace Irrelephant.Outcast.Server.Configuration;
 
-public class OutcastNetworkingOptions
+public class NetworkingOptions
 {
     public int MaxSimultaneousConnectionRequests { get; set; } = 4;
 
@@ -16,4 +17,6 @@ public class OutcastNetworkingOptions
     public int BufferSize { get; set; } = 256;
 
     public int MaxResizableBufferSize { get; set; } = 1024;
+
+    public required ILogger Logger { get; set; }
 }

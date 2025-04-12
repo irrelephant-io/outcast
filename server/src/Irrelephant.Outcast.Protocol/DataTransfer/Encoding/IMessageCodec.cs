@@ -1,6 +1,6 @@
-﻿using Irrelephant.Outcast.Protocol.Messages;
+﻿using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
 
-namespace Irrelephant.Outcast.Protocol.Encoding;
+namespace Irrelephant.Outcast.Protocol.DataTransfer.Encoding;
 
 public interface IMessageCodec
 {

@@ -1,4 +1,4 @@
-﻿namespace Irrelephant.Outcast.Protocol;
+﻿namespace Irrelephant.Outcast.Protocol.DataTransfer;
 
 public readonly record struct TlvMessage(
     TlvHeader Header,

@@ -1,26 +1,28 @@
 ﻿using FluentAssertions;
-using Irrelephant.Outcast.Protocol.Encoding;
-using Irrelephant.Outcast.Protocol.Messages;
+using Irrelephant.Outcast.Protocol.DataTransfer.Encoding;
+using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Configuration;
-using Irrelephant.Outcast.Server.Protocol;
+using Irrelephant.Outcast.Server.Networking;
 using Microsoft.Extensions.Options;
 
 namespace Irrelephant.Outcast.Server.Tests;
 
-public class SocketProtocolStateTests
+public class ClientMessageQueueTests
 {
     private readonly IMessageCodec _messageCodec;
-    private readonly SocketProtocolState _sut;
+    private readonly IoSocketMessageHandler _sut;
 
-    public SocketProtocolStateTests()
+    public ClientMessageQueueTests()
     {
         _messageCodec = new JsonMessageCodec();
-        _sut = new SocketProtocolState(
+        _sut = new IoSocketMessageHandler(
+            new(),
             Options.Create(
-                new OutcastNetworkingOptions
+                new NetworkingOptions
                 {
                     MessageCodec = _messageCodec,
-                    ConnectionListenEndpoint = null!
+                    ConnectionListenEndpoint = null!,
+                    Logger = null!
                 }
             )
         );
@@ -35,8 +37,10 @@ public class SocketProtocolStateTests
         var packed = tlv.PackInto(messageBuffer);
 
         _sut.ProcessRead(packed, packed.Length);
-
-        _sut.ReceivedMessages.Should().ContainEquivalentOf(message);
+        _sut.InboundMessageReceived += (_, received) =>
+        {
+            received.Should().BeEquivalentTo(message);
+        };
     }
 
     [Fact]
@@ -56,7 +60,10 @@ public class SocketProtocolStateTests
         var packedChunk3 = packed[20..];
         _sut.ProcessRead(packedChunk3, packedChunk3.Length);
 
-        _sut.ReceivedMessages.Should().ContainEquivalentOf(message);
+        _sut.InboundMessageReceived += (_, received) =>
+        {
+            received.Should().BeEquivalentTo(message);
+        };
     }
 
     [Fact]
@@ -66,6 +73,7 @@ public class SocketProtocolStateTests
         var message = new ConnectRequest("john.doe@example.com");
         var tlv = _messageCodec.Encode(message);
         var packed = tlv.PackInto(messageBuffer);
+        using var eventMonitor = _sut.Monitor();
 
         var packedChunk1 = packed[..5];
         _sut.ProcessRead(packedChunk1, packedChunk1.Length);
@@ -73,7 +81,9 @@ public class SocketProtocolStateTests
         var packedChunk2 = packed[5..];
         _sut.ProcessRead(packedChunk2, packedChunk2.Length);
 
-        _sut.ReceivedMessages.Should().ContainEquivalentOf(message);
+        eventMonitor
+            .Should().Raise(nameof(_sut.InboundMessageReceived))
+            .WithArgs<ConnectRequest>(it => it.Name == message.Name);
     }
 
     [Fact]
@@ -82,6 +92,8 @@ public class SocketProtocolStateTests
         var messageBuffer = new byte[1024];
         var message = new ConnectRequest("john.doe@example.com");
         var tlv = _messageCodec.Encode(message);
+        using var eventMonitor = _sut.Monitor();
+
         var packed1 = tlv.PackInto(messageBuffer);
         var packed2 = tlv.PackInto(messageBuffer.AsMemory(packed1.Length..));
 
@@ -90,8 +102,11 @@ public class SocketProtocolStateTests
             packed1.Length + packed2.Length
         );
 
-        _sut.ReceivedMessages.Should().HaveCount(2);
-        _sut.ReceivedMessages.Should().ContainEquivalentOf(message);
+        eventMonitor
+            .Should().Raise(nameof(_sut.InboundMessageReceived))
+            .WithArgs<ConnectRequest>(it => it.Name == message.Name);
+
+        eventMonitor.OccurredEvents.Should().HaveCount(2);
     }
 
     [Fact]
@@ -101,9 +116,12 @@ public class SocketProtocolStateTests
         var message = new ConnectRequest(new string(Enumerable.Repeat('.', 512).ToArray()));
         var tlv = _messageCodec.Encode(message);
         var packed = tlv.PackInto(messageBuffer);
+        using var eventMonitor = _sut.Monitor();
 
         _sut.ProcessRead(packed, packed.Length);
 
-        _sut.ReceivedMessages.Should().ContainEquivalentOf(message);
+        eventMonitor
+            .Should().Raise(nameof(_sut.InboundMessageReceived))
+            .WithArgs<ConnectRequest>(it => it.Name == message.Name);
     }
 }

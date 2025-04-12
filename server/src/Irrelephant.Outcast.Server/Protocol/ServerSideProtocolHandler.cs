@@ -1,0 +1,25 @@
+﻿using Irrelephant.Outcast.Protocol;
+using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
+using Irrelephant.Outcast.Server.Networking;
+using Irrelephant.Outcast.Server.Protocol.Client;
+using Microsoft.Extensions.Logging;
+
+namespace Irrelephant.Outcast.Server.Protocol;
+
+public class ServerSideProtocolHandler(IClient client, ILogger logger) : IProtocolHandler
+{
+    public void HandleNewInboundMessage(object? sender, Message message)
+    {
+        var messageQueue = (IoSocketMessageHandler)sender!;
+        if (message is ConnectRequest connectRequest && client is ServerSideConnectingClient connectingClient)
+        {
+            connectingClient.ClientName = connectRequest.Name;
+            messageQueue.EnqueueMessage(
+                new ConnectResponse(
+                    AcceptedName: connectRequest.Name,
+                    client.SessionId
+                )
+            );
+        }
+    }
+}
