@@ -2,7 +2,7 @@
 
 namespace Irrelephant.Outcast.Protocol;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
+[StructLayout(LayoutKind.Sequential, Pack = sizeof(int))]
 public readonly record struct TlvHeader(
     int MessageType,
     int MessageLength
