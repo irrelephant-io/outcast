@@ -5,9 +5,11 @@ public readonly record struct TlvMessage(
     Memory<byte> MessageValue
 )
 {
-    public void PackInto(Memory<byte> buffer)
+    public Memory<byte> PackInto(Memory<byte> buffer)
     {
         Header.PackInto(buffer);
         MessageValue.Span.CopyTo(buffer.Span[TlvHeader.Size..]);
+
+        return buffer[..(TlvHeader.Size + Header.MessageLength)];
     }
-};
+}

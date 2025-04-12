@@ -10,16 +10,17 @@ public readonly record struct TlvHeader(
 {
     public static int Size { get; } = Marshal.SizeOf<TlvHeader>();
 
-    public static TlvHeader Unpack(byte[] buffer) =>
-        new(
-            MessageType: BitConverter.ToInt32(buffer, 0),
-            MessageLength: BitConverter.ToInt32(buffer, sizeof(int))
+    public static TlvHeader Unpack(Memory<byte> buffer)
+    {
+        return new(
+            MessageType: MemoryMarshal.Read<int>(buffer.Span),
+            MessageLength: MemoryMarshal.Read<int>(buffer.Span[sizeof(int)..])
         );
+    }
 
     public void PackInto(Memory<byte> buffer)
     {
         BitConverter.TryWriteBytes(buffer.Span, MessageType);
         BitConverter.TryWriteBytes(buffer.Span[sizeof(int)..], MessageLength);
     }
-
 }

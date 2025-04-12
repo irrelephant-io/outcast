@@ -33,16 +33,24 @@ try
 
     var buffer = new byte[1024];
     var tlvMessage = codec.Encode(new ConnectRequest("john.doe@example.com"));
-    tlvMessage.PackInto(buffer);
+    var packedMessage = tlvMessage.PackInto(buffer);
+    await socket.SendAsync(packedMessage, SocketFlags.None);
 
-    await socket.SendAsync(buffer, SocketFlags.None);
-
-    Console.WriteLine("Sent! <Enter> to quit ...");
+    Console.WriteLine("Sent! <Enter> to send more ...");
     Console.ReadLine();
 
+    await socket.SendAsync(packedMessage, SocketFlags.None);
+    await socket.SendAsync(packedMessage, SocketFlags.None);
+
+    Console.WriteLine("Done! <Enter> to quit ...");
+    Console.ReadLine();
 }
 finally
 {
-    socket.Disconnect(false);
+    if (socket.Connected)
+    {
+        await socket.DisconnectAsync(false);
+    }
+
     socket.Dispose();
 }
