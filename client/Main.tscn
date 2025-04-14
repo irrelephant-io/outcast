@@ -1,0 +1,198 @@
+[gd_scene load_steps=18 format=3 uid="uid://dnlfn1a54cboh"]
+
+[ext_resource type="NavigationMesh" uid="uid://c308ajvb5ixp7" path="res://world/navigation/GeoData.tres" id="1_3dxm6"]
+[ext_resource type="Terrain3DTextureAsset" uid="uid://bj2gj7perumcn" path="res://world/resources/rock_030/rock_030.res" id="1_r0du0"]
+[ext_resource type="Terrain3DTextureAsset" uid="uid://d3sskshilld2s" path="res://world/resources/ground_062_s/ground_062_s.res" id="2_cm0pq"]
+[ext_resource type="PackedScene" uid="uid://mwdvra0iosgo" path="res://components/ui/OrbitCamera.tscn" id="3_cm0pq"]
+[ext_resource type="Script" path="res://src/Player.cs" id="3_r0du0"]
+[ext_resource type="Script" uid="uid://uksljmp3qb2r" path="res://src/Ui/Control/PlayerController.cs" id="4_fos0i"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_drvgu"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+energy_multiplier = 1.2
+
+[sub_resource type="Sky" id="Sky_ulcgi"]
+sky_material = SubResource("ProceduralSkyMaterial_drvgu")
+
+[sub_resource type="Environment" id="Environment_nxogm"]
+background_mode = 2
+background_energy_multiplier = 0.7
+sky = SubResource("Sky_ulcgi")
+sdfgi_enabled = true
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.219909, 0.215162, 0.246413, 1)
+fog_light_energy = 0.6
+fog_sun_scatter = 0.6
+fog_density = 0.002
+fog_aerial_perspective = 0.362
+fog_sky_affect = 0.844
+volumetric_fog_density = 0.01
+
+[sub_resource type="Gradient" id="Gradient_drvgu"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ulcgi"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_nxogm"]
+seamless = true
+color_ramp = SubResource("Gradient_drvgu")
+noise = SubResource("FastNoiseLite_ulcgi")
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_3253y"]
+_shader_parameters = {
+&"bias_distance": 512.0,
+&"blend_sharpness": 0.87,
+&"depth_blur": 0.0,
+&"enable_macro_variation": true,
+&"enable_projection": true,
+&"height_blending": true,
+&"macro_variation1": Color(1, 1, 1, 1),
+&"macro_variation2": Color(1, 1, 1, 1),
+&"macro_variation_slope": 0.333,
+&"mipmap_bias": 1.0,
+&"noise1_angle": 0.0,
+&"noise1_offset": Vector2(0.5, 0.5),
+&"noise1_scale": 0.04,
+&"noise2_scale": 0.076,
+&"noise3_scale": 0.225,
+&"noise_texture": SubResource("NoiseTexture2D_nxogm"),
+&"projection_angular_division": 2.0,
+&"projection_threshold": 0.8,
+&"world_space_normal_blend": true
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u3cyc"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_m7jmp"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_u3cyc")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_y2354"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_m7jmp")])
+texture_list = Array[Terrain3DTextureAsset]([ExtResource("1_r0du0"), ExtResource("2_cm0pq")])
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_nxogm"]
+
+[node name="Main" type="Node3D"]
+
+[node name="World" type="Node" parent="."]
+
+[node name="Environment" type="WorldEnvironment" parent="World"]
+environment = SubResource("Environment_nxogm")
+
+[node name="Sun" type="DirectionalLight3D" parent="World"]
+transform = Transform3D(-0.680721, 0.268478, -0.681571, 0, 0.930418, 0.366501, 0.732543, 0.249485, -0.633355, 0, 0, 0)
+light_color = Color(0.955363, 0.62902, 0.490128, 1)
+light_energy = 1.6
+shadow_enabled = true
+directional_shadow_max_distance = 159.0
+
+[node name="Level" type="Node" parent="World"]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="World/Level"]
+navigation_mesh = ExtResource("1_3dxm6")
+
+[node name="Terrain" type="Terrain3D" parent="World/Level/NavigationRegion3D"]
+data_directory = "res://world/terrain"
+material = SubResource("Terrain3DMaterial_3253y")
+assets = SubResource("Terrain3DAssets_y2354")
+collision_layer = 2147483649
+top_level = true
+metadata/_edit_lock_ = true
+
+[node name="Ruin" type="CSGCombiner3D" parent="World/Level"]
+transform = Transform3D(2.87577, 0, 1.5461, 0, 0.429, 0, -0.854355, 0, 5.20419, -136.745, 10.0118, -119.67)
+use_collision = true
+
+[node name="Wall" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(6.25929, 0, 0, 0, 6.54915, 0, 0, 0, 0.208486, -0.0652177, 1.62283, 1.73026)
+
+[node name="Wall3" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(-2.73602e-07, 0, 0.377202, 0, 6.54915, 0, -3.45961, 0, -9.1132e-09, -3.00372, 1.62283, -0.0457976)
+
+[node name="Wall4" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(-2.73602e-07, 0, 0.377202, 0, 6.54915, 0, -3.45961, 0, -9.1132e-09, 2.91556, 1.62283, -0.0457976)
+
+[node name="Wall5" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(-1.60888e-07, 0, 0.194419, 0, 6.54915, 0, -2.03438, 0, -4.69715e-09, 0.820425, 1.62283, -0.888285)
+
+[node name="Wall6" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(2.03438, 0, -3.80116e-09, 0, 6.54914, 0, -7.19627e-08, 0, 0.194418, 1.85514, 1.62283, 0.0317286)
+
+[node name="Wall2" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(6.25929, 0, 0, 0, 6.54915, 0, 0, 0, 0.208486, -0.0652177, 1.62283, -1.84522)
+
+[node name="Floor" type="CSGBox3D" parent="World/Level/Ruin"]
+use_collision = true
+size = Vector3(5.66919, 0.151855, 3.46399)
+
+[node name="Hole" type="CSGCylinder3D" parent="World/Level/Ruin"]
+transform = Transform3D(1.43039, 0, 0.634057, 0, 3.05047, 0, -1.25614, 0, 0.72201, -1.49827, 1.08339, -1.40345)
+operation = 2
+
+[node name="Hole2" type="CSGCylinder3D" parent="World/Level/Ruin"]
+transform = Transform3D(0.724714, 0, 1.17392, 0, 2.04171, 0, -1.58576, 0, 0.536494, -1.95652, 0.0311578, -1.3198)
+operation = 2
+height = 2.46143
+
+[node name="Hole3" type="CSGCylinder3D" parent="World/Level/Ruin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.999999, -1.35969, -0.3382, -0.703948)
+operation = 2
+
+[node name="CSGBox3D" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(-1.07558, 0, -0.0888262, 0, 11.2619, 0, 0.55703, 0, -0.171517, -1.11148, -0.136482, -1.82071)
+operation = 2
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(-0.891048, 0, -0.0117953, 0, 4.86114, 0, 0.0370187, 0, -0.283915, 1.79905, 2.49601, 0.017883)
+operation = 2
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="World/Level/Ruin"]
+transform = Transform3D(-0.813624, 0, -0.811419, 0, 11.1568, 0, 1.14882, 0, -0.574665, -1.51568, -0.136482, -1.8207)
+operation = 2
+
+[node name="UI" type="Node" parent="."]
+
+[node name="MainCamera" parent="UI" node_paths=PackedStringArray("Anchor") instance=ExtResource("3_cm0pq")]
+CameraMinRange = 2.96
+AnglePerPercentViewportAzimuth = 3.0
+AnglePerPercentViewportPitch = 1.5
+Anchor = NodePath("../../Player")
+
+[node name="PlayerController" type="Node" parent="UI" node_paths=PackedStringArray("ControlledPlayer", "CameraController")]
+script = ExtResource("4_fos0i")
+ControlledPlayer = NodePath("../../Player")
+CameraController = NodePath("../MainCamera")
+MoveSpeed = 3.0
+
+[node name="Player" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -139.192, 10.9753, -112.141)
+script = ExtResource("3_r0du0")
+
+[node name="ViewModel" type="MeshInstance3D" parent="Player"]
+mesh = SubResource("CapsuleMesh_nxogm")

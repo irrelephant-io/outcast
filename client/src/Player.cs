@@ -1,0 +1,24 @@
+using System;
+using Godot;
+
+namespace Irrelephant.Outcast.Client;
+
+public partial class Player : Node3D
+{
+    [Export]
+    public Vector3 DesiredPosition { get; set; }
+
+    private Vector3 _startPos;
+
+    public override void _Ready()
+    {
+        _startPos = Position;
+        base._Ready();
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+//        Transform = Transform.Translated(Vector3.Left * (float)(Math.Sin(Time.GetUnixTimeFromSystem())));
+        base._PhysicsProcess(delta);
+    }
+}
