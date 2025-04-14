@@ -6,7 +6,6 @@ using Irrelephant.Outcast.Server.Networking;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-
 using var factory = LoggerFactory.Create(builder => builder.SetMinimumLevel(LogLevel.Debug).AddConsole());
 var hostLogger = factory.CreateLogger<Program>();
 

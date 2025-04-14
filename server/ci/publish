@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+dotnet restore
+dotnet build --configuration=Release
+dotnet test
+dotnet pack ../src/Irrelephant.Outcast.Server
