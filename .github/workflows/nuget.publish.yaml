@@ -37,7 +37,7 @@ jobs:
       - run: |
           dotnet pack \
             --configuration=${{ inputs.configuration }} \
-            /p:Version=${{ inputs.version }}
+            /p:Version=${{ inputs.version }} \
             ${{ inputs.target }}
 
       - run: |
