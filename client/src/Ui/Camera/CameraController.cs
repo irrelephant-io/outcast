@@ -38,8 +38,6 @@ public partial class CameraController : Camera3D
         _desiredPitch = -45f;
         _desiredDistance = Mathf.Lerp(CameraMinRange, CameraMaxRange, 0.5f);
 
-        _lastTargetPosition = Anchor.Position;
-
         base._Ready();
     }
 

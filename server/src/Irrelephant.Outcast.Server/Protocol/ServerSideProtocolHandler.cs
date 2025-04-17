@@ -1,5 +1,5 @@
-﻿using Irrelephant.Outcast.Protocol;
-using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
+﻿using Irrelephant.Outcast.Protocol.Abstractions;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Networking;
 using Irrelephant.Outcast.Server.Protocol.Client;
 using Microsoft.Extensions.Logging;

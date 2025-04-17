@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
-using Irrelephant.Outcast.Protocol.DataTransfer;
-using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Configuration;
 using Irrelephant.Outcast.Server.Networking.EventModel;
 using Microsoft.Extensions.Options;
@@ -104,7 +104,10 @@ public sealed class IoSocketMessageHandler(
         {
             _completeTlvHeader = TlvHeader.Unpack(_inboundTlvHeaderBuffer);
             _tlvHeaderWriteIndex = 0;
-            _readReadState = HandlerReadState.ReadingTlvPayload;
+            _readReadState =
+                _completeTlvHeader.Value.MessageLength == 0
+                    ? HandlerReadState.ReadingTlvHeader
+                    : HandlerReadState.ReadingTlvPayload;
         }
 
         return bytesAvailableToRead;

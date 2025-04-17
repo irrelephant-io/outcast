@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using Irrelephant.Outcast.Protocol.DataTransfer;
-using Irrelephant.Outcast.Protocol.DataTransfer.Encoding;
-using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 
 var socket = new Socket(
     AddressFamily.InterNetworkV6,

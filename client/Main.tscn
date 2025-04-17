@@ -4,8 +4,9 @@
 [ext_resource type="Terrain3DTextureAsset" uid="uid://bj2gj7perumcn" path="res://world/resources/rock_030/rock_030.res" id="1_r0du0"]
 [ext_resource type="Terrain3DTextureAsset" uid="uid://d3sskshilld2s" path="res://world/resources/ground_062_s/ground_062_s.res" id="2_cm0pq"]
 [ext_resource type="PackedScene" uid="uid://mwdvra0iosgo" path="res://components/ui/OrbitCamera.tscn" id="3_cm0pq"]
-[ext_resource type="Script" path="res://src/Player.cs" id="3_r0du0"]
 [ext_resource type="Script" uid="uid://uksljmp3qb2r" path="res://src/Ui/Control/PlayerController.cs" id="4_fos0i"]
+[ext_resource type="PackedScene" uid="uid://bire8pq12exuc" path="res://components/entities/Player.tscn" id="6_lgr22"]
+[ext_resource type="Script" uid="uid://bbetady73ttq6" path="res://src/Networking/NetworkService.cs" id="7_lgr22"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_drvgu"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -96,8 +97,6 @@ lod0_range = 128.0
 mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_m7jmp")])
 texture_list = Array[Terrain3DTextureAsset]([ExtResource("1_r0du0"), ExtResource("2_cm0pq")])
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_nxogm"]
-
 [node name="Main" type="Node3D"]
 
 [node name="World" type="Node" parent="."]
@@ -183,17 +182,18 @@ operation = 2
 CameraMinRange = 2.96
 AnglePerPercentViewportAzimuth = 3.0
 AnglePerPercentViewportPitch = 1.5
-Anchor = NodePath("../../Player")
+Anchor = NodePath("../Player")
 
 [node name="PlayerController" type="Node" parent="UI" node_paths=PackedStringArray("ControlledPlayer", "CameraController")]
 script = ExtResource("4_fos0i")
-ControlledPlayer = NodePath("../../Player")
+ControlledPlayer = NodePath("../Player")
 CameraController = NodePath("../MainCamera")
 MoveSpeed = 3.0
 
-[node name="Player" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -139.192, 10.9753, -112.141)
-script = ExtResource("3_r0du0")
+[node name="Player" parent="UI" instance=ExtResource("6_lgr22")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -173.354, 0, -112.37)
 
-[node name="ViewModel" type="MeshInstance3D" parent="Player"]
-mesh = SubResource("CapsuleMesh_nxogm")
+[node name="Global" type="Node" parent="."]
+
+[node name="NetworkManager" type="Node" parent="Global"]
+script = ExtResource("7_lgr22")

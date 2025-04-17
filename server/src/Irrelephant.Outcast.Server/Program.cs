@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Irrelephant.Outcast.Protocol.DataTransfer.Encoding;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
 using Irrelephant.Outcast.Server.Configuration;
 using Irrelephant.Outcast.Server.Hosting;
 using Irrelephant.Outcast.Server.Networking;
