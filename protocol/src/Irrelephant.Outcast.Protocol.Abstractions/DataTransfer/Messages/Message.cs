@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Irrelephant.Outcast.Protocol.DataTransfer.Messages;
+namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 
 [JsonPolymorphic]
 [JsonDerivedType(typeof(Heartbeat), typeDiscriminator: 0)]

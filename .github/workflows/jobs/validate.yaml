@@ -1,0 +1,29 @@
+name: Validate
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: 'Solution to Validate'
+        required: true
+      configuration:
+        description: 'Configuration of the Build'
+        required: false
+        defaultValue: 'Release'
+
+jobs:
+  check:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - run: dotnet restore --locked-mode ${{ github.events.inuts.target }}
+
+      - run: dotnet build --configuration=${{ github.events.inputs.configuration }} ${{ github.events.inuts.target }}
+
+      - run: dotnet test --no-build

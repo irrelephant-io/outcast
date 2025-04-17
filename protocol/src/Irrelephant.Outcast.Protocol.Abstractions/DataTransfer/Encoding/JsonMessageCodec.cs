@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 
-namespace Irrelephant.Outcast.Protocol.DataTransfer.Encoding;
+namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
 
 public class JsonMessageCodec : IMessageCodec
 {

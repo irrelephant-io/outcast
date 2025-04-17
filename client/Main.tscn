@@ -127,6 +127,7 @@ metadata/_edit_lock_ = true
 
 [node name="Ruin" type="CSGCombiner3D" parent="World/Level"]
 transform = Transform3D(2.87577, 0, 1.5461, 0, 0.429, 0, -0.854355, 0, 5.20419, -136.745, 10.0118, -119.67)
+visible = false
 use_collision = true
 
 [node name="Wall" type="CSGBox3D" parent="World/Level/Ruin"]
