@@ -42,6 +42,6 @@ jobs:
 
       - run: |
           dotnet nuget push \
-            --source="Irrelephant Github" \
+            --source="https://nuget.pkg.github.com/irrelephant-io/index.json" \
             --api-key="${{ secrets.GITHUB_TOKEN }}" \
             "protocol/src/Irrelephant.Outcast.Protocol.Abstractions/bin/Release/Irrelephant.Outcast.Protocol.Abstractions.${{ inputs.version }}.nupkg"
