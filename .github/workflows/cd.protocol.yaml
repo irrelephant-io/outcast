@@ -1,0 +1,21 @@
+name: "CD"
+
+on:
+  push:
+    branches:
+      - master
+      - feature/ci-cd
+
+jobs:
+  validate:
+    name: "Check Build"
+    uses: ./.github/workflows/validate.yaml
+    with:
+      target: "protocol/Irrelephant.Outcast.Protocol.sln"
+
+  publish:
+    name: "Publish Crate"
+    needs: validate
+    uses: ./.github/workflows/publish.yml
+    with:
+      target: "protocol/Irrelephant.Outcast.Protocol.sln"
