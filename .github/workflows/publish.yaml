@@ -28,7 +28,7 @@ jobs:
 
       - run: dotnet build --configuration=${{ inputs.configuration }} ${{ inputs.target }}
 
-      - run: dotnet pack --configuration=${{ inputs.configuration }}
+      - run: dotnet pack --configuration=${{ inputs.configuration }} ${{ inputs.target }}
 
       - run: |
           dotnet nuget push \
