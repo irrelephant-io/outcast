@@ -6,10 +6,12 @@ on:
       target:
         description: 'Solution to Validate'
         required: true
+        type: string
       configuration:
         description: 'Configuration of the Build'
         required: false
         default: 'Release'
+        type: string
 
 jobs:
   check:
