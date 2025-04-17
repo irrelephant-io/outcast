@@ -9,6 +9,6 @@ on:
 jobs:
   validate:
     name: "Build & Test"
-    uses: ./.github/workflows/validate.yml
+    uses: ./.github/workflows/validate.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
