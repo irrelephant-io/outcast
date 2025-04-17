@@ -3,11 +3,11 @@ name: "CI"
 on:
   pull_request:
     path:
+      - ".github/**"
       - "protocol/**"
 
 jobs:
   validate:
-    name: "Build & Test"
-    uses: ./.github/workflows/jobs/validate.yml
+    uses: ./.github/workflows/validate.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"

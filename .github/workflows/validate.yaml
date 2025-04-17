@@ -6,10 +6,12 @@ on:
       target:
         description: 'Solution to Validate'
         required: true
+        type: string
       configuration:
         description: 'Configuration of the Build'
         required: false
-        defaultValue: 'Release'
+        default: 'Release'
+        type: string
 
 jobs:
   check:
@@ -22,8 +24,6 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - run: dotnet restore --locked-mode ${{ github.events.inuts.target }}
+      - run: dotnet restore --locked-mode ${{ inputs.target }}
 
-      - run: dotnet build --configuration=${{ github.events.inputs.configuration }} ${{ github.events.inuts.target }}
-
-      - run: dotnet test --no-build
+      - run: dotnet test --no-build ${{ inputs.target }}

@@ -1,0 +1,20 @@
+name: "CD"
+
+on:
+  push:
+    branches:
+      - main
+      - feature/ci-cd
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yaml
+    with:
+      target: "protocol/Irrelephant.Outcast.Protocol.sln"
+
+  publish:
+    needs: validate
+    uses: ./.github/workflows/nuget.publish.yaml
+    with:
+      target: "protocol/Irrelephant.Outcast.Protocol.sln"
+      version: "0.0.${{ github.run_number }}"
