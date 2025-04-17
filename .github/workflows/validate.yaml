@@ -24,8 +24,8 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - run: dotnet restore --locked-mode ${{ github.events.inuts.target }}
+      - run: dotnet restore --locked-mode ${{ inputs.target }}
 
-      - run: dotnet build --configuration=${{ github.events.inputs.configuration }} ${{ github.events.inuts.target }}
+      - run: dotnet build --configuration=${{ inputs.configuration }} ${{ inputs.target }}
 
       - run: dotnet test --no-build
