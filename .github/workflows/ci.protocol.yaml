@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate:
-    name: "Build & Test"
+    name: "Check Build"
     uses: ./.github/workflows/validate.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
