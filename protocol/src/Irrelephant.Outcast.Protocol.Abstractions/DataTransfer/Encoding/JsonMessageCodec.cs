@@ -10,6 +10,11 @@ public class JsonMessageCodec : IMessageCodec
 
     public Message Decode(TlvMessage tlvMessage)
     {
+        if (tlvMessage.Header is { MessageLength: 0, MessageType: 0 })
+        {
+            return new Heartbeat();
+        }
+
         return JsonSerializer.Deserialize<Message>(tlvMessage.MessageValue.Span, _jsonOptions)!;
     }
 
