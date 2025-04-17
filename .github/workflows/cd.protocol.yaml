@@ -8,13 +8,11 @@ on:
 
 jobs:
   validate:
-    name: "Check Build"
     uses: ./.github/workflows/validate.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
 
   publish:
-    name: "Build & Publish Package"
     needs: validate
     uses: ./.github/workflows/nuget.publish.yaml
     with:
