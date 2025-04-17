@@ -16,6 +16,6 @@ jobs:
   publish:
     name: "Publish Crate"
     needs: validate
-    uses: ./.github/workflows/publish.yml
+    uses: ./.github/workflows/publish.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
