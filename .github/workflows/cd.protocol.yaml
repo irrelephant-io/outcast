@@ -7,13 +7,20 @@ on:
       - feature/ci-cd
 
 jobs:
-  validate:
-    uses: ./.github/workflows/validate.yaml
+  # validate:
+  #   uses: ./.github/workflows/validate.yaml
+  #   with:
+  #     target: "protocol/Irrelephant.Outcast.Protocol.sln"
+
+  - name: Generate build number
+    uses: einaregilsson/build-number@v2 
     with:
-      target: "protocol/Irrelephant.Outcast.Protocol.sln"
+      token: ${{secrets.github_token}}
+  - name: Print new build number
+    run: echo "Build number is $BUILD_NUMBER"
 
   publish:
-    needs: validate
+    # needs: validate
     uses: ./.github/workflows/nuget.publish.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"

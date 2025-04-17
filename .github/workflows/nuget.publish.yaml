@@ -34,10 +34,16 @@ jobs:
 
       - run: dotnet build --configuration=${{ inputs.configuration }} ${{ inputs.target }}
 
+      - name: Generate build number
+        id: buildnumber
+        uses: einaregilsson/build-number@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - run: |
           dotnet pack \
             --configuration=${{ inputs.configuration }} \
-            /p:Version=${{ inputs.version }} \
+            /p:Version=${{ steps.buildnumber.outputs.build_number }} \
             ${{ inputs.target }}
 
       - run: |
