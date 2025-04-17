@@ -9,7 +9,7 @@ on:
       configuration:
         description: 'Configuration of the Build'
         required: false
-        defaultValue: 'Release'
+        default: 'Release'
 
 jobs:
   check:
