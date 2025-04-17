@@ -12,7 +12,9 @@ public abstract record Message
     internal abstract int TvlType { get; }
 }
 
-public record Heartbeat : Message
+public abstract record HeaderOnlyMessage : Message;
+
+public record Heartbeat : HeaderOnlyMessage
 {
     internal override int TvlType => 0;
 }
