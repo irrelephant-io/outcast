@@ -14,8 +14,8 @@ jobs:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
 
   publish:
-    name: "Publish Crate"
+    name: "Build & Publish Package"
     needs: validate
-    uses: ./.github/workflows/publish.yaml
+    uses: ./.github/workflows/nuget.publish.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
