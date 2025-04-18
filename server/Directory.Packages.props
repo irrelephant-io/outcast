@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Irrelephant.Outcast.Protocol.Abstractions" Version="0.0.18" />
+    <PackageVersion Include="Irrelephant.Outcast.Protocol.Abstractions" Version="0.0.20" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.4" />
     <!-- Testing Packages -->
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />

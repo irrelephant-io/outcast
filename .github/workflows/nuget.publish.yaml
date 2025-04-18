@@ -41,6 +41,6 @@ jobs:
             ${{ inputs.target }}
 
       - run: |
-          dotnet nuget push \
-            --api-key="${{ secrets.GITHUB_TOKEN }}" \
-            "protocol/src/Irrelephant.Outcast.Protocol.Abstractions/bin/Release/Irrelephant.Outcast.Protocol.Abstractions.${{ inputs.version }}.nupkg"
+          for file in $(find . -name \*.nupkg); do
+            dotnet nuget push --api-key="${{ secrets.GITHUB_TOKEN }}" file
+          done
