@@ -1,3 +1,3 @@
 ﻿namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages.Primitives;
 
-public struct Vector3Primitive(float X, float Y, float Z);
+public record struct Vector3Primitive(float X, float Y, float Z);
