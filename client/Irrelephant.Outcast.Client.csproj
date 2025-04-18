@@ -4,4 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>Irrelephant.Outcast.Client</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Irrelephant.Outcast.Protocol.Networking" Version="0.0.24" />
+  </ItemGroup>
 </Project>
