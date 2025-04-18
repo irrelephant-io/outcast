@@ -11,6 +11,9 @@ jobs:
     uses: ./.github/workflows/validate.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
+      sdk:
+        - '9.0.x'
+        - '8.0.x'
 
   publish:
     needs: validate
@@ -18,3 +21,6 @@ jobs:
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
       version: "0.0.${{ github.run_number }}"
+      sdk:
+        - '9.0.x'
+        - '8.0.x'

@@ -3,10 +3,16 @@ name: Validate
 on:
   workflow_call:
     inputs:
+      sdk:
+        description: 'Versions of the SDK'
+        required: true
+        type: string[]
+
       target:
         description: 'Solution to Validate'
         required: true
         type: string
+
       configuration:
         description: 'Configuration of the Build'
         required: false
@@ -22,7 +28,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: ${{ inputs.sdk }}
 
       - run: dotnet restore --locked-mode ${{ inputs.target }}
 
