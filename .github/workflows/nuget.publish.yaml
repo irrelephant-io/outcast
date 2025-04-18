@@ -42,5 +42,5 @@ jobs:
 
       - run: |
           for file in $(find . -name \*.nupkg); do
-            dotnet nuget push --api-key="${{ secrets.GITHUB_TOKEN }}" file
+            dotnet nuget push --api-key="${{ secrets.GITHUB_TOKEN }}" $file
           done
