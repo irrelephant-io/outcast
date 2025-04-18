@@ -11,6 +11,3 @@ jobs:
     uses: ./.github/workflows/validate.yaml
     with:
       target: "protocol/Irrelephant.Outcast.Protocol.sln"
-      sdk:
-        - '9.0.x'
-        - '8.0.x'

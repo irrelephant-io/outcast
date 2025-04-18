@@ -3,10 +3,6 @@ name: Build & Publish
 on:
   workflow_call:
     inputs:
-      sdk:
-        description: 'Versions of the SDK'
-        required: true
-
       target:
         description: 'Solution to Validate'
         required: true
@@ -32,7 +28,9 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ inputs.sdk }}
+          dotnet-version:
+            - '9.0.x'
+            - '8.0.x'
 
       - run: dotnet restore --locked-mode ${{ inputs.target }}
 
