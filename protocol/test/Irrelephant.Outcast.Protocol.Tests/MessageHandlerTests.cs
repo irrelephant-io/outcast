@@ -4,7 +4,7 @@ using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Protocol.Networking;
 using Microsoft.Extensions.Options;
 
-namespace Irrelephant.Outcast.Server.Tests;
+namespace Irrelephant.Outcast.Protocol.Tests;
 
 public class MessageHandlerTests
 {

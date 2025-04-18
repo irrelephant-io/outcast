@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{573F892B-7A7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{46462B0C-3202-4014-824E-74CA9DEFF5D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Outcast.Server.Tests", "test\Irrelephant.Outcast.Server.Tests\Irrelephant.Outcast.Server.Tests.csproj", "{635ECA9F-3952-42C8-BA0A-34C219970984}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Outcast.Protocol.Tests", "test\Irrelephant.Outcast.Protocol.Tests\Irrelephant.Outcast.Protocol.Tests.csproj", "{635ECA9F-3952-42C8-BA0A-34C219970984}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{52621D2F-B56C-402F-808E-33D7DBB5A364}"
 	ProjectSection(SolutionItems) = preProject
