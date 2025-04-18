@@ -3,7 +3,7 @@
 namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 
 [JsonPolymorphic]
-[JsonDerivedType(typeof(Heartbeat), typeDiscriminator: 0)]
+// Heartbeat is handled in a special way since it doesn't contain message body
 [JsonDerivedType(typeof(ConnectRequest), typeDiscriminator: 1)]
 [JsonDerivedType(typeof(ConnectResponse), typeDiscriminator: 2)]
 public abstract record Message
@@ -12,9 +12,7 @@ public abstract record Message
     internal abstract int TvlType { get; }
 }
 
-public abstract record HeaderOnlyMessage : Message;
-
-public record Heartbeat : HeaderOnlyMessage
+public record Heartbeat : Message
 {
     internal override int TvlType => 0;
 }

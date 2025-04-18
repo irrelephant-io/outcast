@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -15,12 +15,12 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup >
     <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Irrelephant.Outcast.Server\Irrelephant.Outcast.Server.csproj" />
+    <ProjectReference Include="..\..\src\Irrelephant.Outcast.Protocol.Networking\Irrelephant.Outcast.Protocol.Networking.csproj" />
   </ItemGroup>
-
+  
 </Project>

@@ -45,7 +45,7 @@ public sealed class IoSocketMessageHandler(
     /// <summary>
     /// Amount of bytes read from the TLV message payload.
     /// </summary>
-    private int _tlvPayloadWriteIndex = 0;
+    private int _tlvPayloadWriteIndex;
 
     /// <summary>
     /// Current state of reading of the TLV message.
