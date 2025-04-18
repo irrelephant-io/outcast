@@ -1,6 +1,6 @@
 ﻿using Irrelephant.Outcast.Protocol.Abstractions;
+using Irrelephant.Outcast.Protocol.Networking;
 using Irrelephant.Outcast.Server.Configuration;
-using Irrelephant.Outcast.Server.Networking;
 using Microsoft.Extensions.Options;
 
 namespace Irrelephant.Outcast.Server.Protocol.Client;
@@ -20,7 +20,7 @@ public class ServerSideConnectingClient : IClient
     public Guid SessionId { get; set; } = Guid.CreateVersion7();
     public string ClientName { get; set; } = "<unknown>";
 
-    public ServerSideConnectingClient(IOptions<NetworkingOptions> options, IoSocketMessageHandler messageHandler)
+    public ServerSideConnectingClient(IOptions<ServerNetworkingOptions> options, IoSocketMessageHandler messageHandler)
     {
         MessageHandler = messageHandler;
         ProtocolHandler = new ServerSideProtocolHandler(this, options.Value.Logger);

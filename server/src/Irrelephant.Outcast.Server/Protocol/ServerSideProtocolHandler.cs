@@ -1,5 +1,6 @@
 ﻿using Irrelephant.Outcast.Protocol.Abstractions;
 using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
+using Irrelephant.Outcast.Protocol.Networking;
 using Irrelephant.Outcast.Server.Networking;
 using Irrelephant.Outcast.Server.Protocol.Client;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ public class ServerSideProtocolHandler(IClient client, ILogger logger) : IProtoc
 {
     public void HandleNewInboundMessage(object? sender, Message message)
     {
-        var messageQueue = (IoSocketMessageHandler)sender!;
+        var messageQueue = (IMessageHandler)sender!;
         logger.LogDebug("Inbound message received: {Message}", message);
 
         if (message is ConnectRequest connectRequest && client is ServerSideConnectingClient connectingClient)

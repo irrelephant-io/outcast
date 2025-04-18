@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
+using Irrelephant.Outcast.Protocol.Networking.EventModel;
 using Irrelephant.Outcast.Server.Configuration;
-using Irrelephant.Outcast.Server.Networking.EventModel;
 using Irrelephant.Outcast.Server.Protocol.Client;
 using Irrelephant.Outcast.Server.Utility;
 using Microsoft.Extensions.Logging;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 namespace Irrelephant.Outcast.Server.Networking;
 
 public class NetworkService(
-    IOptions<NetworkingOptions> options
+    IOptions<ServerNetworkingOptions> options
 ) : IAsyncDisposable
 {
     private readonly TaskCompletionSource _completionSource = new();

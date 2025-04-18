@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using Irrelephant.Outcast.Protocol.Networking;
 using Irrelephant.Outcast.Server.Configuration;
 using Irrelephant.Outcast.Server.Protocol.Client;
 using Irrelephant.Outcast.Server.Utility;
@@ -8,7 +9,7 @@ namespace Irrelephant.Outcast.Server.Networking;
 
 public class IoSocketPool : IAsyncDisposable
 {
-    private readonly IOptions<NetworkingOptions> _options;
+    private readonly IOptions<ServerNetworkingOptions> _options;
 
     /// <summary>
     /// Controls simultaneous access to critical resources.
@@ -21,7 +22,7 @@ public class IoSocketPool : IAsyncDisposable
 
     public IEnumerable<SocketAsyncEventArgs> ActiveSockets => _activeSockets;
 
-    public IoSocketPool(IOptions<NetworkingOptions> options)
+    public IoSocketPool(IOptions<ServerNetworkingOptions> options)
     {
         _options = options;
         _controlledSockets = Enumerable.Range(0, options.Value.MaxSimultaneousConnectionRequests)

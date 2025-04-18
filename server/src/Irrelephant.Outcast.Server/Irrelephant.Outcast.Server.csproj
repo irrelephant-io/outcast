@@ -15,7 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Irrelephant.Outcast.Protocol.Abstractions" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+      <PackageReference Include="Irrelephant.Outcast.Protocol.Networking" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageVersion Update="Irrelephant.Outcast.Protocol.Networking" Version="0.0.24" />
     </ItemGroup>
 </Project>

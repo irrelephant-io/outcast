@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Irrelephant.Outcast.Server.Networking;
 
-public class IoBufferPool(IOptions<NetworkingOptions> options)
+public class IoBufferPool(IOptions<ServerNetworkingOptions> options)
 {
     /// <summary>
     /// Controls simultaneous access to critical resources.

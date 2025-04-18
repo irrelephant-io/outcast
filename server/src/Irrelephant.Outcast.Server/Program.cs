@@ -10,7 +10,7 @@ using var factory = LoggerFactory.Create(builder => builder.SetMinimumLevel(LogL
 var hostLogger = factory.CreateLogger<Program>();
 
 var localhost = await Dns.GetHostEntryAsync(IPAddress.IPv6Loopback);
-var options = Options.Create(new NetworkingOptions
+var options = Options.Create(new ServerNetworkingOptions
 {
     ConnectionListenEndpoint = new IPEndPoint(localhost.AddressList[0], port: 42069),
     MessageCodec = new JsonMessageCodec(),
