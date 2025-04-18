@@ -28,7 +28,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version:
+          dotnet-version: |
             - '9.0.x'
             - '8.0.x'
 
