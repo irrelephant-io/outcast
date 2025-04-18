@@ -15,6 +15,7 @@ public class JsonMessageCodecTests
         var message = new ConnectResponse(
             "Some name",
             Guid.NewGuid(),
+            Guid.NewGuid(),
             new Vector3Primitive(100, 200, 300),
             69f
         );
