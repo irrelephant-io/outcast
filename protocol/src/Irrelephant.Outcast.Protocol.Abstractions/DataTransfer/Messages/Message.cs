@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages.Primitives;
 
 namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 
@@ -22,7 +23,12 @@ public record ConnectRequest(string Name) : Message
     internal override int TvlType => 1;
 };
 
-public record ConnectResponse(string AcceptedName, Guid SessionId) : Message
+public record ConnectResponse(
+    string AcceptedName,
+    Guid SessionId,
+    Vector3Primitive SpawnPosition,
+    float YAxisRotation
+) : Message
 {
     internal override int TvlType => 2;
 }
