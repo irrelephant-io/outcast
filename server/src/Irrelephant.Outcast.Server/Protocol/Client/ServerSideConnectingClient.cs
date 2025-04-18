@@ -1,4 +1,4 @@
-﻿using Irrelephant.Outcast.Protocol;
+﻿using Irrelephant.Outcast.Protocol.Abstractions;
 using Irrelephant.Outcast.Server.Configuration;
 using Irrelephant.Outcast.Server.Networking;
 using Microsoft.Extensions.Options;

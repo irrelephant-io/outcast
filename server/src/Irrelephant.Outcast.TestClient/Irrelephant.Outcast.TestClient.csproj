@@ -8,6 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Irrelephant.Outcast.Protocol" />
+      <PackageReference Include="Irrelephant.Outcast.Protocol.Abstractions" />
     </ItemGroup>
 </Project>

@@ -1,29 +1,15 @@
 ﻿using System.Net.Sockets;
 using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer;
 using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
-using Irrelephant.Outcast.Server.Configuration;
-using Irrelephant.Outcast.Server.Networking.EventModel;
+using Irrelephant.Outcast.Protocol.Networking.EventModel;
 using Microsoft.Extensions.Options;
 
-namespace Irrelephant.Outcast.Server.Networking;
+namespace Irrelephant.Outcast.Protocol.Networking;
 
 internal enum HandlerReadState
 {
     ReadingTlvHeader,
     ReadingTlvPayload,
-}
-
-public interface IMessageHandler
-{
-    public DateTimeOffset LastNetworkActivity { get; }
-
-    event EventHandler<Message>? InboundMessageReceived;
-
-    event EventHandler<OutboundMessageAvailableArgs>? OutboundMessageAvailable;
-
-    void ProcessRead(Memory<byte> buffer, int receivedBytes, bool isAsync = true);
-    void Reset();
-    void EnqueueMessage(Message message);
 }
 
 public sealed class IoSocketMessageHandler(
@@ -191,17 +177,13 @@ public sealed class IoSocketMessageHandler(
         _tlvHeaderWriteIndex = 0;
         _tlvPayloadWriteIndex = 0;
         _readReadState = HandlerReadState.ReadingTlvHeader;
-        _eventCount = 0;
     }
 
     private void OnMessageReceived(Message message) =>
         InboundMessageReceived?.Invoke(this, message);
 
-    private int _eventCount = 0;
-
     private void OnOutboundMessageAvailable(Memory<byte> buffer)
     {
-        _eventCount++;
         OutboundMessageAvailable?.Invoke(
             this,
             new OutboundMessageAvailableArgs

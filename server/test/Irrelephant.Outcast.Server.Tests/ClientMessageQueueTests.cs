@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using Irrelephant.Outcast.Protocol.DataTransfer.Encoding;
-using Irrelephant.Outcast.Protocol.DataTransfer.Messages;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
+using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Configuration;
 using Irrelephant.Outcast.Server.Networking;
 using Microsoft.Extensions.Options;

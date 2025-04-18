@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+        <PackageId>Irrelephant.Outcast.Protocol.Networking</PackageId>
+        <RootNamespace>Irrelephant.Outcast.Protocol.Networking</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Irrelephant.Outcast.Protocol.Abstractions\Irrelephant.Outcast.Protocol.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.4" />
+    </ItemGroup>
+
+</Project>
