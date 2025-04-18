@@ -6,7 +6,6 @@ on:
       sdk:
         description: 'Versions of the SDK'
         required: true
-        type: string[]
 
       target:
         description: 'Solution to Validate'
