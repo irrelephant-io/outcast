@@ -32,11 +32,15 @@ jobs:
 
       - run: dotnet restore --locked-mode ${{ inputs.target }}
 
-      - run: dotnet build --configuration=${{ inputs.configuration }} ${{ inputs.target }}
+      - run: |
+          dotnet build \
+            --no-restore \
+            --configuration=${{ inputs.configuration }} \
+            ${{ inputs.target }}
 
       - run: |
           dotnet pack \
-            --configuration=${{ inputs.configuration }} \
+            --no-build \
             /p:Version=${{ inputs.version }} \
             ${{ inputs.target }}
 
