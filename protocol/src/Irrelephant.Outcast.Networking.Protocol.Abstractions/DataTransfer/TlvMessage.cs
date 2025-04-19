@@ -1,10 +1,12 @@
-﻿namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer;
+﻿namespace Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
 
 public readonly record struct TlvMessage(
     TlvHeader Header,
     Memory<byte> MessageValue
 )
 {
+    public int Size => TlvHeader.Size + Header.MessageLength;
+
     public Memory<byte> PackInto(Memory<byte> buffer)
     {
         Header.PackInto(buffer);

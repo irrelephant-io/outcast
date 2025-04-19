@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <RootNamespace>Irrelephant.Outcast.Networking.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Irrelephant.Outcast.Protocol.Networking\Irrelephant.Outcast.Protocol.Networking.csproj" />
+    <ProjectReference Include="..\..\src\Irrelephant.Outcast.Networking.Transport\Irrelephant.Outcast.Networking.Transport.csproj" />
   </ItemGroup>
   
 </Project>

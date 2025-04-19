@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
+using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 
-namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
+namespace Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Encoding;
 
 public class JsonMessageCodec : IMessageCodec
 {
@@ -23,7 +23,7 @@ public class JsonMessageCodec : IMessageCodec
         {
             return new TlvMessage(
                 new TlvHeader(message.TvlType, MessageLength: 0),
-                new Memory<byte>()
+                Memory<byte>.Empty
             );
         }
 

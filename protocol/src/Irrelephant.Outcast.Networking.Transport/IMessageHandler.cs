@@ -1,7 +1,7 @@
-﻿using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
-using Irrelephant.Outcast.Protocol.Networking.EventModel;
+﻿using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
+using Irrelephant.Outcast.Networking.Transport.EventModel;
 
-namespace Irrelephant.Outcast.Protocol.Networking;
+namespace Irrelephant.Outcast.Networking.Transport;
 
 public interface IMessageHandler
 {

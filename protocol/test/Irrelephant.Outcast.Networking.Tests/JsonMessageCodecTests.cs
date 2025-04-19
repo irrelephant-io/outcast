@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
-using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
-using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
-using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages.Primitives;
+using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Encoding;
+using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
+using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages.Primitives;
 
-namespace Irrelephant.Outcast.Protocol.Tests;
+namespace Irrelephant.Outcast.Networking.Tests;
 
 public class JsonMessageCodecTests
 {
@@ -23,6 +23,6 @@ public class JsonMessageCodecTests
         var tlv = _sut.Encode(message);
         var decoded = _sut.Decode(tlv);
 
-        decoded.Should().BeEquivalentTo(message);
+        AssertionExtensions.Should((object)decoded).BeEquivalentTo(message);
     }
 }

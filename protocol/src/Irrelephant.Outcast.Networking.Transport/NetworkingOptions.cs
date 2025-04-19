@@ -1,6 +1,6 @@
-﻿using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
+﻿using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Encoding;
 
-namespace Irrelephant.Outcast.Protocol.Networking;
+namespace Irrelephant.Outcast.Networking.Transport;
 
 public class NetworkingOptions
 {

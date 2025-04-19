@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace Irrelephant.Outcast.Protocol.Networking.EventModel;
+namespace Irrelephant.Outcast.Networking.Transport.EventModel;
 
 public class OutboundMessageAvailableArgs : EventArgs
 {

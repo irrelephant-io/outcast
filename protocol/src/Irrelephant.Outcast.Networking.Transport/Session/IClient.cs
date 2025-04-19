@@ -1,4 +1,4 @@
-﻿namespace Irrelephant.Outcast.Protocol.Networking.Session;
+﻿namespace Irrelephant.Outcast.Networking.Transport.Session;
 
 public interface IClient : IDisposable
 {

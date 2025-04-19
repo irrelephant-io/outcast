@@ -5,16 +5,20 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>true</IsPackable>
-        <PackageId>Irrelephant.Outcast.Protocol.Networking</PackageId>
-        <RootNamespace>Irrelephant.Outcast.Protocol.Networking</RootNamespace>
+        <PackageId>Irrelephant.Outcast.Networking.Transport</PackageId>
+        <RootNamespace>Irrelephant.Outcast.Networking.Transport</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Irrelephant.Outcast.Protocol.Abstractions\Irrelephant.Outcast.Protocol.Abstractions.csproj" />
+      <ProjectReference Include="..\Irrelephant.Outcast.Networking.Protocol.Abstractions\Irrelephant.Outcast.Networking.Protocol.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Options" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Buffer\" />
     </ItemGroup>
 
 </Project>

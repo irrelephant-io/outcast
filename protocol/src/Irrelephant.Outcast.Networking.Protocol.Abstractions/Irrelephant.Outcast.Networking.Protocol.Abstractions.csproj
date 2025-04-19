@@ -5,8 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>true</IsPackable>
-        <PackageId>Irrelephant.Outcast.Protocol.Abstractions</PackageId>
-        <RootNamespace>Irrelephant.Outcast.Protocol.Abstractions</RootNamespace>
+        <PackageId>Irrelephant.Outcast.Networking.Protocol.Abstractions</PackageId>
+        <RootNamespace>Irrelephant.Outcast.Networking.Protocol.Abstractions</RootNamespace>
     </PropertyGroup>
 
 </Project>

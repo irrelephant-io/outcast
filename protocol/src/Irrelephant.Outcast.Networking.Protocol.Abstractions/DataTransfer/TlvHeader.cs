@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer;
+namespace Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
 
 [StructLayout(LayoutKind.Sequential, Pack = sizeof(int))]
 public readonly record struct TlvHeader(
@@ -10,13 +10,11 @@ public readonly record struct TlvHeader(
 {
     public static int Size { get; } = Marshal.SizeOf<TlvHeader>();
 
-    public static TlvHeader Unpack(Memory<byte> buffer)
-    {
-        return new(
+    public static TlvHeader Unpack(Memory<byte> buffer) =>
+        new(
             MessageType: MemoryMarshal.Read<int>(buffer.Span),
             MessageLength: MemoryMarshal.Read<int>(buffer.Span[sizeof(int)..])
         );
-    }
 
     public void PackInto(Memory<byte> buffer)
     {

@@ -1,6 +1,6 @@
-﻿using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
+﻿using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 
-namespace Irrelephant.Outcast.Protocol.Networking.Session;
+namespace Irrelephant.Outcast.Networking.Transport.Session;
 
 public interface IProtocolHandler
 {

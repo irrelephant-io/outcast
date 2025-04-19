@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages.Primitives;
+using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages.Primitives;
 
-namespace Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Messages;
+namespace Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 
 [JsonPolymorphic]
 // Heartbeat is handled in a special way since it doesn't contain message body
