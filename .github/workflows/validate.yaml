@@ -29,6 +29,6 @@ jobs:
 
       - run: dotnet restore --locked-mode ${{ inputs.target }}
 
-      - run: dotnet build --no-restore ${{ inputs.target }} --configuration=${{ inputs.configuration }}
+      - run: dotnet build --no-restore --configuration=${{ inputs.configuration }} ${{ inputs.target }}
 
-      - run: dotnet test --no-build ${{ inputs.target }} --configuration=${{ inputs.configuration }}
+      - run: dotnet test --no-build  --configuration=${{ inputs.configuration }} ${{ inputs.target }}

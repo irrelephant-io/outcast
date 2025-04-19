@@ -4,10 +4,10 @@ on:
   pull_request:
     path:
       - ".github/**"
-      - "protocol/**"
+      - "networking/**"
 
 jobs:
   validate:
     uses: ./.github/workflows/validate.yaml
     with:
-      target: "protocol/Irrelephant.Outcast.Protocol.sln"
+      target: "networking/Irrelephant.Outcast.Networking.sln"
