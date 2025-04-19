@@ -15,5 +15,5 @@ jobs:
     needs: validate
     uses: ./.github/workflows/nuget.publish.yaml
     with:
-      target: "protocol/Irrelephant.Outcast.Networking.sln"
+      target: "networking/Irrelephant.Outcast.Networking.sln"
       version: "0.0.${{ github.run_number }}"
