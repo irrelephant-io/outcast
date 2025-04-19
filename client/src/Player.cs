@@ -1,9 +1,9 @@
-using System;
 using Godot;
+using Irrelephant.Outcast.Client.Networking;
 
 namespace Irrelephant.Outcast.Client;
 
-public partial class Player : Node3D
+public partial class Player : NetworkedEntity
 {
     [Export]
     public Vector3 DesiredPosition { get; set; }

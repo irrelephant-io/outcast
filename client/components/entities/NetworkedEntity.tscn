@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvwq5y3niyiws"]
+
+[ext_resource type="Script" uid="uid://bydxmwlqegwj8" path="res://src/Networking/NetworkedEntity.cs" id="1_r5d3f"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_3sser"]
+
+[node name="Entity" type="Node3D"]
+script = ExtResource("1_r5d3f")
+
+[node name="EntityModel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_3sser")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.84329, 0)
+billboard = 1
+text = "<Character Name>"

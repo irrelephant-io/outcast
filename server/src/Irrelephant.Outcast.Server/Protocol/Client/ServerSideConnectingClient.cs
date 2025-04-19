@@ -1,5 +1,5 @@
-﻿using Irrelephant.Outcast.Protocol.Abstractions;
-using Irrelephant.Outcast.Protocol.Networking;
+﻿using Irrelephant.Outcast.Protocol.Networking;
+using Irrelephant.Outcast.Protocol.Networking.Session;
 using Irrelephant.Outcast.Server.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -20,10 +20,18 @@ public class ServerSideConnectingClient : IClient
     public Guid SessionId { get; set; } = Guid.CreateVersion7();
     public string ClientName { get; set; } = "<unknown>";
 
-    public ServerSideConnectingClient(IOptions<ServerNetworkingOptions> options, IoSocketMessageHandler messageHandler)
+    public ServerSideConnectingClient(
+        IOptions<ServerStorageOptions> storage,
+        IOptions<ServerNetworkingOptions> options,
+        IoSocketMessageHandler messageHandler
+    )
     {
         MessageHandler = messageHandler;
-        ProtocolHandler = new ServerSideProtocolHandler(this, options.Value.Logger);
+        ProtocolHandler = new ServerSideProtocolHandler(
+            this,
+            storage.Value.Storage,
+            options.Value.Logger
+        );
         MessageHandler.InboundMessageReceived += ProtocolHandler.HandleNewInboundMessage;
     }
 
@@ -31,15 +39,4 @@ public class ServerSideConnectingClient : IClient
     {
         MessageHandler.InboundMessageReceived -= ProtocolHandler.HandleNewInboundMessage;
     }
-}
-
-public interface IClient : IDisposable
-{
-    Guid SessionId { get; set; }
-
-    string ClientName { get; set; }
-
-    public IMessageHandler MessageHandler { get; }
-
-    public IProtocolHandler ProtocolHandler { get; }
 }

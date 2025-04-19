@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://bo0wrhb37pstu"]
+
+[ext_resource type="Script" uid="uid://o31xbji2sjds" path="res://src/Ui/Interface/Login.cs" id="1_sv08j"]
+
+[node name="ConnectBox" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sv08j")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 1
+offset_right = 256.0
+offset_bottom = 128.0
+
+[node name="UserName" type="TextEdit" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Character name"
+
+[node name="ConnectButton" type="Button" parent="Layout"]
+layout_mode = 2
+text = "Connnect..."

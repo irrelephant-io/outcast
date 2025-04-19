@@ -10,7 +10,7 @@ public partial class CameraController : Camera3D
     [Export] public float AnglePerPercentViewportAzimuth { get; set; } = 4f;
     [Export] public float AnglePerPercentViewportPitch { get; set; } = 2f;
     [Export] public float ZoomSpeedPerStep { get; set; } = 0.2f;
-    [Export] public Node3D Anchor { get; set; }
+    [Export] public Node3D? Anchor { get; set; }
 
     private float _desiredAzimuth;
     private float _desiredPitch;
@@ -43,6 +43,11 @@ public partial class CameraController : Camera3D
 
     public override void _Process(double delta)
     {
+        if (Anchor is null)
+        {
+            return;
+        }
+
         var offset = Vector3.Back
             .Rotated(Vector3.Right, Mathf.DegToRad(_desiredPitch))
             .Rotated(Vector3.Up, Mathf.DegToRad(_desiredAzimuth))
@@ -61,6 +66,11 @@ public partial class CameraController : Camera3D
 
     public override void _Input(InputEvent evt)
     {
+        if (evt.IsCanceled() || Anchor is null)
+        {
+            return;
+        }
+
         if (evt is InputEventMouseButton { ButtonIndex: MouseButton.Right } buttonEvent)
         {
             HandleEnableOrbit(buttonEvent);

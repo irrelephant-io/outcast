@@ -9,7 +9,8 @@ using Microsoft.Extensions.Options;
 namespace Irrelephant.Outcast.Server.Networking;
 
 public class NetworkService(
-    IOptions<ServerNetworkingOptions> options
+    IOptions<ServerNetworkingOptions> options,
+    IOptions<ServerStorageOptions> storageOptions
 ) : IAsyncDisposable
 {
     private readonly TaskCompletionSource _completionSource = new();
@@ -25,7 +26,7 @@ public class NetworkService(
 
     private readonly IoBufferPool _bufferPool = new(options);
 
-    private readonly IoSocketPool _socketPool = new(options);
+    private readonly IoSocketPool _socketPool = new(options, storageOptions);
 
     public Task RunAsync(CancellationToken cancellationToken)
     {
@@ -103,7 +104,8 @@ public class NetworkService(
                 eventArgs.GetAssociatedClient().SessionId
             );
             var client = (ServerSideConnectingClient)eventArgs.UserToken!;
-            client.MessageHandler.ProcessRead(eventArgs.MemoryBuffer, eventArgs.BytesTransferred, isAsync);
+            var bufferSection = eventArgs.MemoryBuffer[eventArgs.Offset..(eventArgs.Offset + eventArgs.Count)];
+            client.MessageHandler.ProcessRead(bufferSection, eventArgs.BytesTransferred, isAsync);
             var isAsyncPending = eventArgs.AcceptSocket!.ReceiveAsync(eventArgs);
             if (!isAsyncPending)
             {
@@ -137,7 +139,8 @@ public class NetworkService(
         e.AcceptSocket!.Shutdown(SocketShutdown.Both);
         e.AcceptSocket!.Close();
         e.Completed -= OnIoOperationCompleted;
-        e.GetAssociatedClient().MessageHandler.OutboundMessageAvailable -= OnOutboundAvailable;
+        var associatedClient = e.GetAssociatedClient();
+        associatedClient.MessageHandler.OutboundMessageAvailable -= OnOutboundAvailable;
         _socketPool.Release(e);
         _bufferPool.Release(e);
     }

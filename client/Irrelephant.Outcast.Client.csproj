@@ -3,8 +3,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>Irrelephant.Outcast.Client</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Irrelephant.Outcast.Protocol.Networking" Version="0.0.24" />
+    <PackageReference Include="Irrelephant.Outcast.Protocol.Networking" Version="0.0.39" />
   </ItemGroup>
 </Project>

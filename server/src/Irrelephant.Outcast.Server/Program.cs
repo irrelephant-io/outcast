@@ -3,6 +3,7 @@ using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
 using Irrelephant.Outcast.Server.Configuration;
 using Irrelephant.Outcast.Server.Hosting;
 using Irrelephant.Outcast.Server.Networking;
+using Irrelephant.Outcast.Server.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -17,8 +18,10 @@ var options = Options.Create(new ServerNetworkingOptions
     Logger = factory.CreateLogger("Networking")
 });
 
+var storage = Options.Create(new ServerStorageOptions { Storage = new InMemoryWorldStateStorage() });
+
 await using var host = new ServerHost(TimeSpan.FromSeconds(5), hostLogger);
-await using var server = new NetworkService(options);
+await using var server = new NetworkService(options, storage);
 
 hostLogger.LogInformation("Starting server...");
 

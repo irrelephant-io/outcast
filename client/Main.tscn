@@ -1,12 +1,13 @@
-[gd_scene load_steps=18 format=3 uid="uid://dnlfn1a54cboh"]
+[gd_scene load_steps=19 format=3 uid="uid://dnlfn1a54cboh"]
 
 [ext_resource type="NavigationMesh" uid="uid://c308ajvb5ixp7" path="res://world/navigation/GeoData.tres" id="1_3dxm6"]
 [ext_resource type="Terrain3DTextureAsset" uid="uid://bj2gj7perumcn" path="res://world/resources/rock_030/rock_030.res" id="1_r0du0"]
 [ext_resource type="Terrain3DTextureAsset" uid="uid://d3sskshilld2s" path="res://world/resources/ground_062_s/ground_062_s.res" id="2_cm0pq"]
 [ext_resource type="PackedScene" uid="uid://mwdvra0iosgo" path="res://components/ui/OrbitCamera.tscn" id="3_cm0pq"]
 [ext_resource type="Script" uid="uid://uksljmp3qb2r" path="res://src/Ui/Control/PlayerController.cs" id="4_fos0i"]
-[ext_resource type="PackedScene" uid="uid://bire8pq12exuc" path="res://components/entities/Player.tscn" id="6_lgr22"]
+[ext_resource type="Script" uid="uid://4i0x1it37cli" path="res://src/Simulation/NetworkEntityContainer.cs" id="4_trn2v"]
 [ext_resource type="Script" uid="uid://bbetady73ttq6" path="res://src/Networking/NetworkService.cs" id="7_lgr22"]
+[ext_resource type="PackedScene" uid="uid://bo0wrhb37pstu" path="res://components/ui/ConnectBox.tscn" id="7_trn2v"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_drvgu"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -176,24 +177,25 @@ operation = 2
 transform = Transform3D(-0.813624, 0, -0.811419, 0, 11.1568, 0, 1.14882, 0, -0.574665, -1.51568, -0.136482, -1.8207)
 operation = 2
 
+[node name="Entities" type="Node" parent="World"]
+script = ExtResource("4_trn2v")
+
 [node name="UI" type="Node" parent="."]
 
-[node name="MainCamera" parent="UI" node_paths=PackedStringArray("Anchor") instance=ExtResource("3_cm0pq")]
+[node name="MainCamera" parent="UI" instance=ExtResource("3_cm0pq")]
 CameraMinRange = 2.96
 AnglePerPercentViewportAzimuth = 3.0
 AnglePerPercentViewportPitch = 1.5
-Anchor = NodePath("../Player")
 
-[node name="PlayerController" type="Node" parent="UI" node_paths=PackedStringArray("ControlledPlayer", "CameraController")]
+[node name="PlayerController" type="Node" parent="UI" node_paths=PackedStringArray("CameraController")]
 script = ExtResource("4_fos0i")
-ControlledPlayer = NodePath("../Player")
 CameraController = NodePath("../MainCamera")
 MoveSpeed = 3.0
 
-[node name="Player" parent="UI" instance=ExtResource("6_lgr22")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -173.354, 0, -112.37)
+[node name="ConnectBox" parent="UI" node_paths=PackedStringArray("NetworkService") instance=ExtResource("7_trn2v")]
+NetworkService = NodePath("../../Global/NetworkService")
 
 [node name="Global" type="Node" parent="."]
 
-[node name="NetworkManager" type="Node" parent="Global"]
+[node name="NetworkService" type="Node" parent="Global"]
 script = ExtResource("7_lgr22")

@@ -10,6 +10,7 @@ namespace Irrelephant.Outcast.Server.Networking;
 public class IoSocketPool : IAsyncDisposable
 {
     private readonly IOptions<ServerNetworkingOptions> _options;
+    private readonly IOptions<ServerStorageOptions> _storage;
 
     /// <summary>
     /// Controls simultaneous access to critical resources.
@@ -22,9 +23,14 @@ public class IoSocketPool : IAsyncDisposable
 
     public IEnumerable<SocketAsyncEventArgs> ActiveSockets => _activeSockets;
 
-    public IoSocketPool(IOptions<ServerNetworkingOptions> options)
+    public IoSocketPool(
+        IOptions<ServerNetworkingOptions> options,
+        IOptions<ServerStorageOptions> storage
+    )
     {
         _options = options;
+        _storage = storage;
+
         _controlledSockets = Enumerable.Range(0, options.Value.MaxSimultaneousConnectionRequests)
             .Select(_ =>
             {
@@ -43,7 +49,11 @@ public class IoSocketPool : IAsyncDisposable
         {
             var borrowedSocket = _availableSockets.Pop();
             var borrowedMessageQueue = (IoSocketMessageHandler)borrowedSocket.UserToken!;
-            borrowedSocket.UserToken = new ServerSideConnectingClient(_options, borrowedMessageQueue);
+            borrowedSocket.UserToken = new ServerSideConnectingClient(
+                _storage,
+                _options,
+                borrowedMessageQueue
+            );
             _activeSockets.Add(borrowedSocket);
             return borrowedSocket;
         }

@@ -1,5 +1,5 @@
 ﻿using System.Net.Sockets;
-using Irrelephant.Outcast.Server.Protocol.Client;
+using Irrelephant.Outcast.Protocol.Networking.Session;
 
 namespace Irrelephant.Outcast.Server.Utility;
 
