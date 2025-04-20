@@ -76,7 +76,7 @@ public class TcpTransportHandler : ITransportHandler
 
     internal TcpTransportHandler() { }
 
-    static TcpTransportHandler FromSocketAsyncEventArgs(SocketAsyncEventArgs socketArgs)
+    public static TcpTransportHandler FromSocketAsyncEventArgs(SocketAsyncEventArgs socketArgs)
     {
         var handler = new TcpTransportHandler
         {
@@ -113,7 +113,13 @@ public class TcpTransportHandler : ITransportHandler
 
     private void StartRead()
     {
-        var isAsync = _socketAsyncEventArgs.ConnectSocket!.ReceiveAsync(_socketAsyncEventArgs);
+        var socket = _socketAsyncEventArgs.ConnectSocket ?? _socketAsyncEventArgs.AcceptSocket;
+        if (socket is null)
+        {
+            throw new InvalidOperationException("Neither connect nor accept socket were available.");
+        }
+
+        var isAsync = socket.ReceiveAsync(_socketAsyncEventArgs);
         if (!isAsync)
         {
             UnprocessedReadBuffer = new Memory<byte>(SocketBuffer, 0, _socketAsyncEventArgs.BytesTransferred);
@@ -232,5 +238,10 @@ public class TcpTransportHandler : ITransportHandler
             _tlvPayloadBuilderMemory = _tlvPayloadBuilderMemory.Slice(UnprocessedReadBuffer.Length);
             UnprocessedReadBuffer = Memory<byte>.Empty;
         }
+    }
+
+    public void Dispose()
+    {
+        _socketAsyncEventArgs.Dispose();
     }
 }

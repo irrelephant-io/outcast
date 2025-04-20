@@ -2,7 +2,7 @@
 
 namespace Irrelephant.Outcast.Networking.Transport;
 
-public interface ITransportHandler
+public interface ITransportHandler : IDisposable
 {
     /// <summary>
     /// Is triggered when a new complete message has been received by the handler.
