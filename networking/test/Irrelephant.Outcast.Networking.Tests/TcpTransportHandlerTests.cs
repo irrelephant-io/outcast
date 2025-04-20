@@ -5,9 +5,9 @@ using Irrelephant.Outcast.Networking.Transport;
 
 namespace Irrelephant.Outcast.Networking.Tests;
 
-public class TcpTransportHandlerReceiveTests
+public class TcpTransportHandlerTests
 {
-    private readonly TcpTransportHandlerReceive _sut = new();
+    private readonly TcpTransportHandler _sut = new();
 
     [Fact]
     void ProcessRead_CanReadWholeTlvHeader_WhenAvailable()

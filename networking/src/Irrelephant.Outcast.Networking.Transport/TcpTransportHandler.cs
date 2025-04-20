@@ -16,7 +16,7 @@ internal enum HandlerReadState
 }
 
 /// <inheritdoc/>
-public class TcpTransportHandlerReceive : ITransportHandler
+public class TcpTransportHandler : ITransportHandler
 {
     /// <inheritdoc/>
     public event EventHandler? Closed;
@@ -39,7 +39,7 @@ public class TcpTransportHandlerReceive : ITransportHandler
     /// <summary>
     /// Region of the <see cref="SocketIoBuffer"/> for which the write operations are yet to be processed.
     /// </summary>
-    internal Memory<byte> UnprocessedWriteBuffer = Memory<byte>.Empty;
+    private Memory<byte> _unprocessedWriteBuffer = Memory<byte>.Empty;
 
     /// <summary>
     /// State of the reading process for the next message.
@@ -79,14 +79,14 @@ public class TcpTransportHandlerReceive : ITransportHandler
     /// <summary>
     /// Queue of outbound messages that need to be sent.
     /// </summary>
-    internal readonly ConcurrentQueue<TlvMessage> OutboundMessages = new();
+    private readonly ConcurrentQueue<TlvMessage> _outboundMessages = new();
 
-    internal TcpTransportHandlerReceive() { }
+    internal TcpTransportHandler() { }
 
     /// <summary>
     /// Synchronizes access to underlying socket, allowing only one async operation at a time.
     /// </summary>
-    private SemaphoreSlim _asyncOperationSemaphore = new(1, 1);
+    private readonly SemaphoreSlim _asyncOperationSemaphore = new(1, 1);
 
     /// <summary>
     /// Creates a transport handler out of a connected or accepted socket.
@@ -94,9 +94,9 @@ public class TcpTransportHandlerReceive : ITransportHandler
     /// <param name="socketArgs">
     /// SocketAsyncEventArgs produced as a result of the socket connect/accept operation.
     /// </param>
-    public static TcpTransportHandlerReceive FromSocketAsyncEventArgs(SocketAsyncEventArgs socketArgs)
+    public static TcpTransportHandler FromSocketAsyncEventArgs(SocketAsyncEventArgs socketArgs)
     {
-        var handler = new TcpTransportHandlerReceive
+        var handler = new TcpTransportHandler
         {
             _socketAsyncEventArgs = socketArgs
         };
@@ -111,7 +111,17 @@ public class TcpTransportHandlerReceive : ITransportHandler
         var socket = _socketAsyncEventArgs.ConnectSocket ?? _socketAsyncEventArgs.AcceptSocket;
         if (socket is null)
         {
-            throw new InvalidOperationException("Neither connect nor accept socket were available for receiving.");
+            throw new InvalidOperationException(
+                "Neither connect nor accept socket were available for receiving."
+            );
+        }
+
+        if (InboundMessages.Count > 0)
+        {
+            throw new InvalidOperationException(
+                "Inbound message queue contains unprocessed messages. " +
+                "These will be lost if not dequeued and processed before Receiving."
+            );
         }
 
         _asyncOperationSemaphore.Wait();
@@ -130,7 +140,7 @@ public class TcpTransportHandlerReceive : ITransportHandler
     }
 
     public void EnqueueOutboundMessage(TlvMessage tlvMessage) =>
-        OutboundMessages.Enqueue(tlvMessage);
+        _outboundMessages.Enqueue(tlvMessage);
 
     public void Transmit()
     {
@@ -167,13 +177,13 @@ public class TcpTransportHandlerReceive : ITransportHandler
     {
         int bytesToWrite = 0;
 
-        UnprocessedWriteBuffer = new Memory<byte>(SocketIoBuffer, 0, SocketIoBuffer.Length);
-        while (OutboundMessages.TryPeek(out var peekedMessage))
+        _unprocessedWriteBuffer = new Memory<byte>(SocketIoBuffer, 0, SocketIoBuffer.Length);
+        while (_outboundMessages.TryPeek(out var peekedMessage))
         {
-            if (UnprocessedWriteBuffer.Length > peekedMessage.Size && OutboundMessages.TryDequeue(out var message))
+            if (_unprocessedWriteBuffer.Length > peekedMessage.Size && _outboundMessages.TryDequeue(out var message))
             {
-                message.PackInto(UnprocessedWriteBuffer);
-                UnprocessedWriteBuffer = UnprocessedWriteBuffer.Slice(message.Size);
+                message.PackInto(_unprocessedWriteBuffer);
+                _unprocessedWriteBuffer = _unprocessedWriteBuffer.Slice(message.Size);
                 bytesToWrite += message.Size;
             }
             else

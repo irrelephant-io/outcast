@@ -5,8 +5,8 @@ namespace Irrelephant.Outcast.Networking.Tests.Fixtures;
 
 public class SendReceiveTestFixture : IAsyncLifetime
 {
-    public SocketAsyncEventArgs Server { get; private set; }
-    public SocketAsyncEventArgs Client { get; private set; }
+    public SocketAsyncEventArgs Server { get; private set; } = null!;
+    public SocketAsyncEventArgs Client { get; private set; } = null!;
 
     private static async ValueTask<Socket> InitializeSocketAsync()
     {

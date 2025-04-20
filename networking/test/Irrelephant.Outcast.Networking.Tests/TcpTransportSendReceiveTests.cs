@@ -8,18 +8,17 @@ namespace Irrelephant.Outcast.Networking.Tests;
 
 public class TcpTransportSendReceiveTests(SendReceiveTestFixture fixture) : IClassFixture<SendReceiveTestFixture>
 {
-    private ITransportHandler _serverHandler =
-        TcpTransportHandlerReceive.FromSocketAsyncEventArgs(fixture.Server);
+    private readonly ITransportHandler _serverHandler =
+        TcpTransportHandler.FromSocketAsyncEventArgs(fixture.Server);
 
-    private ITransportHandler _clientHandler =
-        TcpTransportHandlerReceive.FromSocketAsyncEventArgs(fixture.Client);
+    private readonly ITransportHandler _clientHandler =
+        TcpTransportHandler.FromSocketAsyncEventArgs(fixture.Client);
 
     [Fact]
     public async Task TestStuff()
     {
         const int messageCount = 100;
 
-        // The receiving/emitting code is the same, but is duplicated for ease of debugging
         var receivedNumbersSets = await Task.WhenAll(
             Task.Run(() => EmitAndReceiveSequentialMessagesAsync(_serverHandler, messageCount)),
             Task.Run(() => EmitAndReceiveSequentialMessagesAsync(_clientHandler, messageCount))
