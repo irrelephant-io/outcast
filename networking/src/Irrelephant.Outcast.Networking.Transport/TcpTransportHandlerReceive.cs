@@ -16,11 +16,8 @@ internal enum HandlerReadState
 }
 
 /// <inheritdoc/>
-public class TcpTransportHandler : ITransportHandler
+public class TcpTransportHandlerReceive : ITransportHandler
 {
-    /// <inheritdoc/>
-    public event EventHandler<TlvMessage>? InboundMessage;
-
     /// <inheritdoc/>
     public event EventHandler? Closed;
 
@@ -30,14 +27,19 @@ public class TcpTransportHandler : ITransportHandler
     private SocketAsyncEventArgs _socketAsyncEventArgs = null!;
 
     /// <summary>
-    /// Internal buffer used for IO operations performed by the socket.
+    /// Internal buffer used for read operations performed by the socket.
     /// </summary>
-    internal readonly byte[] SocketBuffer = new byte[1024];
+    internal readonly byte[] SocketIoBuffer = new byte[1024];
 
     /// <summary>
-    /// Region of the <see cref="SocketBuffer"/> for which the read operations are yet to be processed.
+    /// Region of the <see cref="SocketIoBuffer"/> for which the read operations are yet to be processed.
     /// </summary>
     internal Memory<byte> UnprocessedReadBuffer = Memory<byte>.Empty;
+
+    /// <summary>
+    /// Region of the <see cref="SocketIoBuffer"/> for which the write operations are yet to be processed.
+    /// </summary>
+    internal Memory<byte> UnprocessedWriteBuffer = Memory<byte>.Empty;
 
     /// <summary>
     /// State of the reading process for the next message.
@@ -72,59 +74,140 @@ public class TcpTransportHandler : ITransportHandler
     /// <summary>
     /// Queue of inbound messages that need to be processed.
     /// </summary>
-    internal readonly ConcurrentQueue<TlvMessage> InboundMessages = new();
+    public ConcurrentQueue<TlvMessage> InboundMessages { get; } = new();
 
-    internal TcpTransportHandler() { }
+    /// <summary>
+    /// Queue of outbound messages that need to be sent.
+    /// </summary>
+    internal readonly ConcurrentQueue<TlvMessage> OutboundMessages = new();
 
-    public static TcpTransportHandler FromSocketAsyncEventArgs(SocketAsyncEventArgs socketArgs)
+    internal TcpTransportHandlerReceive() { }
+
+    /// <summary>
+    /// Synchronizes access to underlying socket, allowing only one async operation at a time.
+    /// </summary>
+    private SemaphoreSlim _asyncOperationSemaphore = new(1, 1);
+
+    /// <summary>
+    /// Creates a transport handler out of a connected or accepted socket.
+    /// </summary>
+    /// <param name="socketArgs">
+    /// SocketAsyncEventArgs produced as a result of the socket connect/accept operation.
+    /// </param>
+    public static TcpTransportHandlerReceive FromSocketAsyncEventArgs(SocketAsyncEventArgs socketArgs)
     {
-        var handler = new TcpTransportHandler
+        var handler = new TcpTransportHandlerReceive
         {
             _socketAsyncEventArgs = socketArgs
         };
 
-        handler._socketAsyncEventArgs.SetBuffer(handler.SocketBuffer, 0, handler.SocketBuffer.Length);
         handler._socketAsyncEventArgs.Completed += handler.OnSocketOperationCompleted;
-
-        handler.StartRead();
 
         return handler;
     }
 
+    public void Receive()
+    {
+        var socket = _socketAsyncEventArgs.ConnectSocket ?? _socketAsyncEventArgs.AcceptSocket;
+        if (socket is null)
+        {
+            throw new InvalidOperationException("Neither connect nor accept socket were available for receiving.");
+        }
+
+        _asyncOperationSemaphore.Wait();
+        if (socket.Available == 0)
+        {
+            _asyncOperationSemaphore.Release();
+            return;
+        }
+
+        _socketAsyncEventArgs.SetBuffer(SocketIoBuffer, 0, SocketIoBuffer.Length);
+        var isAsync = socket.ReceiveAsync(_socketAsyncEventArgs);
+        if (!isAsync)
+        {
+            ProcessReceive(_socketAsyncEventArgs);
+        }
+    }
+
+    public void EnqueueOutboundMessage(TlvMessage tlvMessage) =>
+        OutboundMessages.Enqueue(tlvMessage);
+
+    public void Transmit()
+    {
+        _asyncOperationSemaphore.Wait();
+        ProcessTransmit(_socketAsyncEventArgs);
+    }
+
+    private void ProcessTransmit(SocketAsyncEventArgs socketArgs)
+    {
+        var socket = socketArgs.ConnectSocket ?? socketArgs.AcceptSocket;
+        if (socket is null)
+        {
+            _asyncOperationSemaphore.Release();
+            throw new InvalidOperationException("Neither connect nor accept socket were available for sending.");
+        }
+
+        var writeBuffer = PrepareOutboundBuffer();
+        if (!writeBuffer.IsEmpty)
+        {
+            _socketAsyncEventArgs.SetBuffer(writeBuffer);
+            var isAsync = socket.SendAsync(_socketAsyncEventArgs);
+            if (!isAsync)
+            {
+                ProcessTransmit(socketArgs);
+            }
+        }
+        else
+        {
+            _asyncOperationSemaphore.Release();
+        }
+    }
+
+    private Memory<byte> PrepareOutboundBuffer()
+    {
+        int bytesToWrite = 0;
+
+        UnprocessedWriteBuffer = new Memory<byte>(SocketIoBuffer, 0, SocketIoBuffer.Length);
+        while (OutboundMessages.TryPeek(out var peekedMessage))
+        {
+            if (UnprocessedWriteBuffer.Length > peekedMessage.Size && OutboundMessages.TryDequeue(out var message))
+            {
+                message.PackInto(UnprocessedWriteBuffer);
+                UnprocessedWriteBuffer = UnprocessedWriteBuffer.Slice(message.Size);
+                bytesToWrite += message.Size;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return new Memory<byte>(SocketIoBuffer, 0, bytesToWrite);
+    }
+
     private void OnSocketOperationCompleted(object? sender, SocketAsyncEventArgs socketArgs)
     {
+        if (socketArgs.BytesTransferred == 0 || socketArgs.SocketError != SocketError.Success)
+        {
+            ProcessDisconnect();
+        }
+
         if (socketArgs.LastOperation == SocketAsyncOperation.Receive)
         {
-            if (socketArgs.SocketError != SocketError.Success)
-            {
-                ProcessDisconnect();
-            }
-
             ProcessReceive(socketArgs);
+        }
+
+        if (socketArgs.LastOperation == SocketAsyncOperation.Send)
+        {
+            ProcessTransmit(socketArgs);
         }
     }
 
     private void ProcessReceive(SocketAsyncEventArgs socketArgs)
     {
-        UnprocessedReadBuffer = new Memory<byte>(SocketBuffer, 0, socketArgs.BytesTransferred);
+        UnprocessedReadBuffer = new Memory<byte>(SocketIoBuffer, 0, socketArgs.BytesTransferred);
         ProcessRead();
-        StartRead();
-    }
-
-    private void StartRead()
-    {
-        var socket = _socketAsyncEventArgs.ConnectSocket ?? _socketAsyncEventArgs.AcceptSocket;
-        if (socket is null)
-        {
-            throw new InvalidOperationException("Neither connect nor accept socket were available.");
-        }
-
-        var isAsync = socket.ReceiveAsync(_socketAsyncEventArgs);
-        if (!isAsync)
-        {
-            UnprocessedReadBuffer = new Memory<byte>(SocketBuffer, 0, _socketAsyncEventArgs.BytesTransferred);
-            ProcessRead();
-        }
+        _asyncOperationSemaphore.Release();
     }
 
     private void ProcessDisconnect()
@@ -221,7 +304,7 @@ public class TcpTransportHandler : ITransportHandler
     {
         if (UnprocessedReadBuffer.Length >= _tlvPayloadBuilderMemory.Length)
         {
-            UnprocessedReadBuffer.CopyTo(_tlvPayloadBuilderMemory);
+            UnprocessedReadBuffer.Slice(0, _tlvHeaderBuilderMemory.Length).CopyTo(_tlvPayloadBuilderMemory);
             UnprocessedReadBuffer = UnprocessedReadBuffer.Slice(_tlvPayloadBuilderMemory.Length);
             var message = new TlvMessage(
                 CompleteTlvHeader!.Value,

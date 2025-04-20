@@ -5,16 +5,16 @@ using Irrelephant.Outcast.Networking.Transport;
 
 namespace Irrelephant.Outcast.Networking.Tests;
 
-public class TcpTransportHandlerTests
+public class TcpTransportHandlerReceiveTests
 {
-    private readonly TcpTransportHandler _sut = new();
+    private readonly TcpTransportHandlerReceive _sut = new();
 
     [Fact]
     void ProcessRead_CanReadWholeTlvHeader_WhenAvailable()
     {
         var header = new TlvHeader(MessageType: 13, MessageLength: 0);
-        header.PackInto(_sut.SocketBuffer);
-        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketBuffer, 0, TlvHeader.Size);
+        header.PackInto(_sut.SocketIoBuffer);
+        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketIoBuffer, 0, TlvHeader.Size);
 
         _sut.ProcessRead();
 
@@ -27,8 +27,8 @@ public class TcpTransportHandlerTests
     void ProcessRead_CanReadChunkedTlvHeader_WhenItWasPartitionedOnReceive()
     {
         var header = new TlvHeader(MessageType: 13, MessageLength: 0);
-        header.PackInto(_sut.SocketBuffer);
-        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketBuffer, 0, 5);
+        header.PackInto(_sut.SocketIoBuffer);
+        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketIoBuffer, 0, 5);
 
         _sut.ProcessRead();
 
@@ -37,14 +37,14 @@ public class TcpTransportHandlerTests
         _sut.CompleteTlvHeader.Should().BeNull();
 
         // Pretend like next chunk of the TLV came in the next transmission unit
-        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketBuffer, 5, 2);
+        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketIoBuffer, 5, 2);
         _sut.ProcessRead();
 
         // Still not done reading... will continue on the next run
         _sut.ReadState.Should().Be(HandlerReadState.ReadingHeader);
         _sut.CompleteTlvHeader.Should().BeNull();
 
-        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketBuffer, 7, 1);
+        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketIoBuffer, 7, 1);
         _sut.ProcessRead();
 
         // Not we are done reading
@@ -62,8 +62,8 @@ public class TcpTransportHandlerTests
             MessageValue = Enumerable.Range(0, messageSize).Select(i => (byte)i).ToArray()
         };
 
-        tlvMessage.PackInto(_sut.SocketBuffer);
-        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketBuffer, 0, tlvMessage.Size);
+        tlvMessage.PackInto(_sut.SocketIoBuffer);
+        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketIoBuffer, 0, tlvMessage.Size);
 
         _sut.ProcessRead();
 
@@ -83,23 +83,23 @@ public class TcpTransportHandlerTests
             MessageValue = Enumerable.Range(0, messageSize).Select(i => (byte)i).ToArray()
         };
 
-        tlvMessage.PackInto(_sut.SocketBuffer);
-        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketBuffer, 0, TlvHeader.Size - 3);
+        tlvMessage.PackInto(_sut.SocketIoBuffer);
+        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketIoBuffer, 0, TlvHeader.Size - 3);
 
         _sut.ProcessRead();
 
-        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketBuffer, TlvHeader.Size - 3, 10);
+        _sut.UnprocessedReadBuffer = new Memory<byte>(_sut.SocketIoBuffer, TlvHeader.Size - 3, 10);
         _sut.ProcessRead();
 
         _sut.UnprocessedReadBuffer = new Memory<byte>(
-            _sut.SocketBuffer,
+            _sut.SocketIoBuffer,
             TlvHeader.Size + 7,
             3
         );
         _sut.ProcessRead();
 
         _sut.UnprocessedReadBuffer = new Memory<byte>(
-            _sut.SocketBuffer,
+            _sut.SocketIoBuffer,
             TlvHeader.Size + 10,
             tlvMessage.Size - TlvHeader.Size - 10
         );

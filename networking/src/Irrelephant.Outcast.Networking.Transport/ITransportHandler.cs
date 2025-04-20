@@ -1,16 +1,34 @@
-﻿using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
+﻿using System.Collections.Concurrent;
+using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
 
 namespace Irrelephant.Outcast.Networking.Transport;
 
 public interface ITransportHandler : IDisposable
 {
-    /// <summary>
-    /// Is triggered when a new complete message has been received by the handler.
-    /// </summary>
-    event EventHandler<TlvMessage> InboundMessage;
+    /// Is emitted when the underlying transport connection is closed due to disconnection or error.
+    public event EventHandler? Closed;
 
     /// <summary>
-    /// Is triggered when the underlying transport connection is closed.
+    /// All messages received by the transport handler and are awaiting to be processed
     /// </summary>
-    event EventHandler Closed;
+    ConcurrentQueue<TlvMessage> InboundMessages { get; }
+
+    /// <summary>
+    /// Enqueues a message into the send queue to be sent over the transport when the queue is flushed.
+    /// </summary>
+    /// <remarks>
+    /// Will not send messages over the socket until <see cref="Transmit"/> is called.
+    /// </remarks>
+    /// <param name="tlvMessage">Message to enqueue.</param>
+    void EnqueueOutboundMessage(TlvMessage tlvMessage);
+
+    /// <summary>
+    /// Performs receive operations on the underlying transport, populating <see cref="InboundMessages"/> queue
+    /// </summary>
+    void Receive();
+
+    /// <summary>
+    /// Flushes the currently enqueued outbound traffic into the transport.
+    /// </summary>
+    void Transmit();
 }
