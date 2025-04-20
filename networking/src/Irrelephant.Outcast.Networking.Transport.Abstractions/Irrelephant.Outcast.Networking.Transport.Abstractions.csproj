@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+        <PackageId>Irrelephant.Outcast.Networking.Transport.Abstractions</PackageId>
+        <RootNamespace>Irrelephant.Outcast.Networking.Transport.Abstractions</RootNamespace>
+    </PropertyGroup>
+
+</Project>

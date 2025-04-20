@@ -3,6 +3,7 @@ using FluentAssertions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
 using Irrelephant.Outcast.Networking.Tests.Fixtures;
 using Irrelephant.Outcast.Networking.Transport;
+using Irrelephant.Outcast.Networking.Transport.Abstractions;
 
 namespace Irrelephant.Outcast.Networking.Tests;
 

@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Irrelephant.Outcast.Networking.Protocol\Irrelephant.Outcast.Networking.Protocol.csproj" />
     <ProjectReference Include="..\..\src\Irrelephant.Outcast.Networking.Transport\Irrelephant.Outcast.Networking.Transport.csproj" />
   </ItemGroup>
   

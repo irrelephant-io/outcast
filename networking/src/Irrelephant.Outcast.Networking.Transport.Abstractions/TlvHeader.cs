@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
+namespace Irrelephant.Outcast.Networking.Transport.Abstractions;
 
 [StructLayout(LayoutKind.Sequential, Pack = sizeof(int))]
 public readonly record struct TlvHeader(

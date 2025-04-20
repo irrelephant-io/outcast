@@ -9,4 +9,8 @@
         <RootNamespace>Irrelephant.Outcast.Networking.Protocol.Abstractions</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Irrelephant.Outcast.Networking.Transport.Abstractions\Irrelephant.Outcast.Networking.Transport.Abstractions.csproj" />
+    </ItemGroup>
+
 </Project>

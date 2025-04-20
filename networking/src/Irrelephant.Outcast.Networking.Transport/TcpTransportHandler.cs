@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Sockets;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
+using Irrelephant.Outcast.Networking.Transport.Abstractions;
 
 namespace Irrelephant.Outcast.Networking.Transport;
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
 
-namespace Irrelephant.Outcast.Networking.Transport;
+namespace Irrelephant.Outcast.Networking.Transport.Abstractions;
 
 public interface ITransportHandler : IDisposable
 {
