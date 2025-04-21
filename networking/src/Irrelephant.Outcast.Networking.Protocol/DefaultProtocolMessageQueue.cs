@@ -38,4 +38,9 @@ public class DefaultProtocolMessageQueue(
     /// <inheritdoc/>
     public void Transmit() =>
         transportHandler.Transmit();
+
+    public void Dispose()
+    {
+        transportHandler.Dispose();
+    }
 }

@@ -6,7 +6,7 @@ namespace Irrelephant.Outcast.Networking.Protocol.Abstractions;
 /// <summary>
 /// Protocol message queue implementing protocol-level communications on top of a specified transport.
 /// </summary>
-public interface IProtocolMessageQueue
+public interface IProtocolMessageQueue : IDisposable
 {
     /// <summary>
     /// Tries to dequeue a protocol message.
