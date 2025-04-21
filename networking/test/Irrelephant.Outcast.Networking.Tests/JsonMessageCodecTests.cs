@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Numerics;
+using FluentAssertions;
 using Irrelephant.Outcast.Networking.Protocol;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Encoding;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
-using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages.Primitives;
 
 namespace Irrelephant.Outcast.Networking.Tests;
 
@@ -17,7 +17,7 @@ public class JsonMessageCodecTests
             "Some name",
             Guid.NewGuid(),
             Guid.NewGuid(),
-            new Vector3Primitive(100, 200, 300),
+            new Vector3(100, 200, 300),
             69f
         );
 

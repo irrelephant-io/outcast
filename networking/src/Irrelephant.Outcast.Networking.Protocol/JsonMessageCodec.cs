@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization.Metadata;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Encoding;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
+using Irrelephant.Outcast.Networking.Protocol.CodecComponents;
 using Irrelephant.Outcast.Networking.Transport.Abstractions;
 
 namespace Irrelephant.Outcast.Networking.Protocol;
@@ -53,7 +54,8 @@ public class JsonMessageCodec : IMessageCodec
         _typeResolver = new MessageCodecTypeResolver();
         _jsonOptions = new JsonSerializerOptions
         {
-            TypeInfoResolver = _typeResolver
+            TypeInfoResolver = _typeResolver,
+            Converters = { new Vector3Converter() }
         };
     }
 
