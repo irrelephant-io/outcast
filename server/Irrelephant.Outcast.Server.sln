@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Outcast.TestClient", "test\Irrelephant.Outcast.TestClient\Irrelephant.Outcast.TestClient.csproj", "{B04E2651-6FD3-461B-9EB0-3CC601FD3A98}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{953F1F62-D743-4191-95C1-FCED6FC762EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8689B88D-7CBA-4DE1-91D0-DC432A75D029}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Outcast.Server.Data", "Irrelephant.Outcast.Server.Data\Irrelephant.Outcast.Server.Data.csproj", "{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,13 +32,13 @@ Global
 		{B984451A-F34B-402C-961D-1F0137DC754D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B984451A-F34B-402C-961D-1F0137DC754D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B984451A-F34B-402C-961D-1F0137DC754D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B04E2651-6FD3-461B-9EB0-3CC601FD3A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B04E2651-6FD3-461B-9EB0-3CC601FD3A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B04E2651-6FD3-461B-9EB0-3CC601FD3A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B04E2651-6FD3-461B-9EB0-3CC601FD3A98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B984451A-F34B-402C-961D-1F0137DC754D} = {953F1F62-D743-4191-95C1-FCED6FC762EC}
-		{B04E2651-6FD3-461B-9EB0-3CC601FD3A98} = {8689B88D-7CBA-4DE1-91D0-DC432A75D029}
+		{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6} = {953F1F62-D743-4191-95C1-FCED6FC762EC}
 	EndGlobalSection
 EndGlobal

@@ -1,8 +1,9 @@
 ﻿using System.Net;
-using Irrelephant.Outcast.Protocol.Abstractions.DataTransfer.Encoding;
+using Irrelephant.Outcast.Networking.Protocol;
 using Irrelephant.Outcast.Server.Configuration;
 using Irrelephant.Outcast.Server.Hosting;
 using Irrelephant.Outcast.Server.Networking;
+using Irrelephant.Outcast.Server.Simulation;
 using Irrelephant.Outcast.Server.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,15 +15,24 @@ var localhost = await Dns.GetHostEntryAsync(IPAddress.IPv6Loopback);
 var options = Options.Create(new ServerNetworkingOptions
 {
     ConnectionListenEndpoint = new IPEndPoint(localhost.AddressList[0], port: 42069),
-    MessageCodec = new JsonMessageCodec(),
-    Logger = factory.CreateLogger("Networking")
+    Logger = factory.CreateLogger("Networking"),
+    MessageCodec = new JsonMessageCodec()
 });
 
-var storage = Options.Create(new ServerStorageOptions { Storage = new InMemoryWorldStateStorage() });
-
-await using var host = new ServerHost(TimeSpan.FromSeconds(5), hostLogger);
-await using var server = new NetworkService(options, storage);
+hostLogger.LogInformation("Initialising world...");
+var world = new OutcastWorld(
+    factory.CreateLogger<OutcastWorld>(),
+    new StorageReader(factory.CreateLogger<StorageReader>())
+);
 
 hostLogger.LogInformation("Starting server...");
+await using var host = new ServerHost(TimeSpan.FromSeconds(5), hostLogger);
+await using var server = new ServerNetworkService(options);
 
-await server.RunAsync(host.CancellationToken);
+hostLogger.LogInformation("Starting simulation...");
+var simulation = new ServerSimulator(world, server, factory.CreateLogger<ServerSimulator>());
+
+await Task.WhenAll(
+    server.RunAsync(host.CancellationToken),
+    simulation.RunAsync(host.CancellationToken)
+);

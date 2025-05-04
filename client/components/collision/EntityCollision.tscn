@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://kgvue2hrd4i8"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0r6d5"]
+
+[node name="CollisionBody" type="CharacterBody3D"]
+collision_layer = 1073741824
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19345, 0)
+shape = SubResource("CylinderShape3D_0r6d5")

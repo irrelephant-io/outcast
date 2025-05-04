@@ -25,4 +25,5 @@ enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")
 
 [layer_names]
 
+3d_physics/layer_31="Entity"
 3d_physics/layer_32="GeoData"

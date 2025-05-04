@@ -30,6 +30,7 @@ public partial class Login : Godot.Control
             _connectButton.Disabled = false;
             NetworkService.InitiateConnectAndLogin(_userNameInput.Text);
             Visible = false;
+            UiController.Instance.FinishConnect();
         };
 
         base._Ready();

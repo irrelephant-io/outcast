@@ -15,7 +15,17 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Arch" />
+      <PackageReference Include="Irrelephant.Outcast.Networking.Protocol" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" />
-      <PackageReference Include="Irrelephant.Outcast.Protocol.Networking" />
+      <PackageReference Include="Irrelephant.Outcast.Networking.Transport" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Irrelephant.Outcast.Server.Data\Irrelephant.Outcast.Server.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Simulation\System\EntityLifecycle\" />
     </ItemGroup>
 </Project>

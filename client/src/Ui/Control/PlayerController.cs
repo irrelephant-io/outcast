@@ -1,5 +1,7 @@
 using Godot;
+using Irrelephant.Outcast.Client.Networking.Extensions;
 using Irrelephant.Outcast.Client.Ui.Camera;
+using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 
 namespace Irrelephant.Outcast.Client.Ui.Control;
 
@@ -15,14 +17,10 @@ public partial class PlayerController : Node
     [Export]
     public float MoveSpeed { get; set; }
 
-    private Vector3 _desiredPosition;
-
     public void SetPlayerEntity(Player player)
     {
         ControlledPlayer = player;
         CameraController.Anchor = player;
-
-        _desiredPosition = ControlledPlayer.Position;
     }
 
     public override void _Ready()
@@ -30,20 +28,11 @@ public partial class PlayerController : Node
         Instance = this;
         CameraController.OnLeftClick += clickedLocation =>
         {
-            _desiredPosition = clickedLocation;
+            ControlledPlayer?.OwningClient.EnqueueOutboundMessage(
+                new InitiateMoveCommand(
+                    clickedLocation.ToClrVector()
+                )
+            );
         };
-    }
-
-    public override void _PhysicsProcess(double delta)
-    {
-        if (ControlledPlayer is null)
-        {
-            return;
-        }
-
-        ControlledPlayer.Position = ControlledPlayer.Position.MoveToward(
-            _desiredPosition,
-            (float)(MoveSpeed * delta)
-        );
     }
 }

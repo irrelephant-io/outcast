@@ -1,5 +1,7 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.Concurrent;
+using System.Net.Sockets;
 using Irrelephant.Outcast.Networking.Transport;
+using Irrelephant.Outcast.Networking.Transport.Abstractions;
 using Irrelephant.Outcast.Server.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -7,11 +9,12 @@ using Microsoft.Extensions.Options;
 namespace Irrelephant.Outcast.Server.Networking;
 
 public class ServerNetworkService(
-    IOptions<ServerNetworkingOptions> options,
-    IOptions<ServerStorageOptions> storageOptions
+    IOptions<ServerNetworkingOptions> options
 ) : IAsyncDisposable
 {
     private readonly TaskCompletionSource _completionSource = new();
+
+    public readonly ConcurrentBag<ProtocolClient> ActiveClients = new();
 
     private readonly Socket _listenSocket = new(
         AddressFamily.InterNetworkV6,
@@ -53,11 +56,28 @@ public class ServerNetworkService(
 
     private void ProcessAccept(SocketAsyncEventArgs acceptArgs)
     {
-        TcpTransportHandler
+        var handler = TcpTransportHandler.FromSocketAsyncEventArgs(acceptArgs);
+        var protocolQueue = new ProtocolClient(handler, options.Value.MessageCodec);
+        handler.Closed += (sender, _) => ((ITransportHandler)sender!).Dispose();
+        ActiveClients.Add(protocolQueue);
+        StartAccept(_listenSocket);
     }
 
     private void OnAcceptCompleted(object? sender, SocketAsyncEventArgs e)
     {
+        if (e.SocketError == SocketError.Success)
+        {
+            ProcessAccept(e);
+        }
+    }
 
+    public ValueTask DisposeAsync()
+    {
+        _listenSocket.Dispose();
+        while (ActiveClients.TryTake(out var protocolQueue))
+        {
+            protocolQueue.Dispose();
+        }
+        return ValueTask.CompletedTask;
     }
 }

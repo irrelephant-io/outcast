@@ -4,7 +4,7 @@ namespace Irrelephant.Outcast.Client.Simulation;
 
 public partial class NetworkEntityContainer : Node
 {
-    public static Node Node { get; private set; }
+    public static Node Node { get; private set; } = null!;
 
     public override void _Ready()
     {

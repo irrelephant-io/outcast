@@ -1,5 +1,6 @@
 using Godot;
 using Irrelephant.Outcast.Client.Constants;
+using Irrelephant.Outcast.Client.Networking;
 
 namespace Irrelephant.Outcast.Client.Ui.Camera;
 
@@ -27,6 +28,9 @@ public partial class CameraController : Camera3D
 
     [Signal]
     public delegate void OnLeftClickEventHandler(Vector3 position);
+
+    [Signal]
+    public delegate void OnEntityClickEventHandler(NetworkedEntity entity);
 
     public override void _Ready()
     {
@@ -102,11 +106,17 @@ public partial class CameraController : Camera3D
 
         var raycastQuery = PhysicsRayQueryParameters3D.Create(
             from, to,
-            collisionMask: Collision.GeoData
+            collisionMask: Collision.GeoData | Collision.Entities
         );
         var result = state.IntersectRay(raycastQuery);
         if (result.Count > 0)
         {
+            var clickedCollider = result["collider"].Obj;
+            if (clickedCollider is CharacterBody3D { CollisionLayer: Collision.Entities } body)
+            {
+                EmitSignalOnEntityClick(body.GetParent<NetworkedEntity>());
+            }
+
             EmitSignal(SignalName.OnLeftClick, result["position"]);
         }
     }
@@ -115,7 +125,7 @@ public partial class CameraController : Camera3D
     {
         _desiredDistance = Mathf.Max(
             CameraMinRange,
-            _desiredDistance + ZoomSpeedPerStep * (wheelEvent.ButtonIndex is MouseButton.WheelUp ? +1 : -1)
+            _desiredDistance + ZoomSpeedPerStep * (wheelEvent.ButtonIndex is MouseButton.WheelUp ? -1 : +1)
         );
     }
 
