@@ -14,7 +14,6 @@ public class JsonMessageCodecTests
     public void EncodingMessageWithPrimitives_ShouldYieldSameMessage_AsWhenEncoded()
     {
         var message = new ConnectResponse(
-            "Some name",
             Guid.NewGuid(),
             Guid.NewGuid(),
             new Vector3(100, 200, 300),
