@@ -14,5 +14,6 @@ public record ConnectResponse(
 ) : SpawnEntity(EntityId, SpawnPosition, YAxisRotation);
 
 public record DisconnectNotice(
-    Guid SessionId
+    Guid SessionId,
+    string Reason
 ) : Message;
