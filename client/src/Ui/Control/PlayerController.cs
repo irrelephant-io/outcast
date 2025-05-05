@@ -9,7 +9,7 @@ public partial class PlayerController : Node
 {
     public static PlayerController Instance { get; private set; }
 
-    public Player? ControlledPlayer { get; set; }
+    public Entities.PlayerEntity? ControlledPlayer { get; set; }
 
     [Export]
     public CameraController CameraController = null!;
@@ -17,10 +17,19 @@ public partial class PlayerController : Node
     [Export]
     public float MoveSpeed { get; set; }
 
-    public void SetPlayerEntity(Player player)
+    public void SetPlayerEntity(Entities.PlayerEntity playerEntity)
     {
-        ControlledPlayer = player;
-        CameraController.Anchor = player;
+        ControlledPlayer = playerEntity;
+        CameraController.Anchor = playerEntity;
+    }
+
+    public override void _ExitTree()
+    {
+        if (ControlledPlayer is not null)
+        {
+            var client = ControlledPlayer.OwningClient;
+            client.EnqueueOutboundMessage(new DisconnectNotice(client.SessionId, "Exiting."));
+        }
     }
 
     public override void _Ready()
@@ -29,7 +38,7 @@ public partial class PlayerController : Node
         CameraController.OnLeftClick += clickedLocation =>
         {
             ControlledPlayer?.OwningClient.EnqueueOutboundMessage(
-                new InitiateMoveCommand(
+                new InitiateMoveRequest(
                     clickedLocation.ToClrVector()
                 )
             );

@@ -1,5 +1,6 @@
 using Godot;
 using Irrelephant.Outcast.Client.Constants;
+using Irrelephant.Outcast.Client.Entities;
 using Irrelephant.Outcast.Client.Networking;
 
 namespace Irrelephant.Outcast.Client.Ui.Camera;
@@ -59,7 +60,10 @@ public partial class CameraController : Camera3D
 
         LookAtFromPosition(
             position: Position.Lerp(Anchor.Position + offset, 0.8f),
-            target: _lastTargetPosition.Lerp(Anchor.Position, 0.7f),
+            target: _lastTargetPosition.Lerp(
+                Anchor.Position + Vector3.Up,
+                0.7f
+            ),
             Vector3.Up
         );
 

@@ -15,6 +15,7 @@ public struct GlobalId : IComponent
 public struct Movable : IComponent
 {
     public bool IsMoved;
+    public bool IsDoneMoving;
     public Vector3 Position;
     public float MoveSpeed;
 }

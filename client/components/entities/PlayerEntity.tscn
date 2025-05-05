@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://duea2ncxe4a1c"]
+
+[ext_resource type="PackedScene" uid="uid://b8g47eadevxdc" path="res://components/entities/geometry/human_low_poly.glb" id="2_2xplk"]
+[ext_resource type="Script" uid="uid://s8f720h48ghs" path="res://src/Entities/PlayerEntity.cs" id="2_bdgpa"]
+[ext_resource type="PackedScene" uid="uid://kgvue2hrd4i8" path="res://components/collision/EntityCollision.tscn" id="2_kd518"]
+
+[node name="Entity" type="Node3D" node_paths=PackedStringArray("EntityLabel", "DisplayModel")]
+script = ExtResource("2_bdgpa")
+EntityLabel = NodePath("EntityLabel")
+DisplayModel = NodePath("DisplayModel")
+
+[node name="EntityLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.84329, 0)
+billboard = 1
+text = "<Character Name>"
+
+[node name="DisplayModel" parent="." instance=ExtResource("2_2xplk")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CollisionBody" parent="." instance=ExtResource("2_kd518")]

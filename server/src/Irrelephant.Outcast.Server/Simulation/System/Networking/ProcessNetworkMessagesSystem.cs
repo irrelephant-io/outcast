@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Arch.Core;
+using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Simulation.Components;
 using Irrelephant.Outcast.Server.Simulation.Space;
@@ -23,12 +24,29 @@ public class ProcessNetworkMessagesSystem(IPositionTracker positionTracker)
                     {
                         ProcessConnectRequest(world, ref protocolClient, ref entity, request, positionTracker);
                     }
-                    else if (message is InitiateMoveCommand move)
+                    else if (message is InitiateMoveRequest move)
                     {
-                        if (world.Has<Movable>(entity))
+                        if (world.Has<Movable, GlobalId>(entity))
                         {
-                            ref var movable = ref world.Get<Movable>(entity);
-                            movable.Position = move.MovePosition;
+                            var movable = world.Get<Movable, GlobalId>(entity);
+                            movable.t0.Position = move.MovePosition;
+
+                            var moveNotice = new InitiateMoveNotice(
+                                movable.t1.Id,
+                                move.MovePosition
+                            );
+
+                            protocolClient.Network.EnqueueOutboundMessage(moveNotice);
+
+                            // Notify other interested clients that the entity is moving.
+                            foreach (var interestedEntity in protocolClient.InterestSphere.EntitiesWithin)
+                            {
+                                ref var client = ref interestedEntity.TryGetRef<ProtocolClient>(out var hasClient);
+                                if (hasClient)
+                                {
+                                    client.Network.EnqueueOutboundMessage(moveNotice);
+                                }
+                            }
                         }
                     }
                 }
@@ -50,7 +68,7 @@ public class ProcessNetworkMessagesSystem(IPositionTracker positionTracker)
             new GlobalId { Id = newEntityId },
             new NetworkSessionId { Id = protocolClient.Network.SessionId },
             new Transform { Position = DefaultSpawnPosition },
-            new Movable { Position = DefaultSpawnPosition, MoveSpeed = 3.0f },
+            new Movable { Position = DefaultSpawnPosition, MoveSpeed = 5.0f },
             new NamedEntity { Name = request.Name }
         );
 
@@ -58,7 +76,6 @@ public class ProcessNetworkMessagesSystem(IPositionTracker positionTracker)
         protocolClient.Network.EnqueueOutboundMessage(
             new ConnectResponse
             (
-                AcceptedName: request.Name,
                 protocolClient.Network.SessionId,
                 newEntityId,
                 SpawnPosition: DefaultSpawnPosition,

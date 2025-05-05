@@ -20,15 +20,29 @@ public static class UpdateNetworkCharacterStatus
                 {
                     var moveMessage = new EntityPositionUpdate(
                         EntityId: id.Id,
-                        transform.Position
+                        movable.MoveSpeed,
+                        transform.Position,
+                        transform.Rotation.Y
                     );
+                    var moveDoneNotice = movable.IsDoneMoving
+                        ? new MoveDoneNotice(id.Id)
+                        : null;
+
                     pc.Network.EnqueueOutboundMessage(moveMessage);
+                    if (moveDoneNotice is not null)
+                    {
+                        pc.Network.EnqueueOutboundMessage(new MoveDoneNotice(id.Id));
+                    }
                     foreach (var clientOfInterest in pc.InterestSphere.EntitiesWithin)
                     {
                         ref var client = ref clientOfInterest.TryGetRef<ProtocolClient>(out var exists);
                         if (exists)
                         {
                             client.Network.EnqueueOutboundMessage(moveMessage);
+                            if (moveDoneNotice is not null)
+                            {
+                                client.Network.EnqueueOutboundMessage(new MoveDoneNotice(id.Id));
+                            }
                         }
                     }
                 }

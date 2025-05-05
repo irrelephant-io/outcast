@@ -11,7 +11,7 @@ public class UpdateInterestSphereSystem(IPositionTracker positionTracker)
         var allNetworkedEntities = new QueryDescription().WithAll<ProtocolClient, Transform>();
         world.Query(
             in allNetworkedEntities,
-            (ref Entity entity, ref ProtocolClient protocolClient, ref Transform transform) =>
+            (Entity entity, ref ProtocolClient protocolClient, ref Transform transform) =>
             {
                 var entitiesInSphere = positionTracker
                     .QueryWithin(transform.Position, protocolClient.InterestSphere.Radius);

@@ -1,4 +1,5 @@
 ﻿using Arch.Core;
+using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Simulation.Components;
 
@@ -17,14 +18,24 @@ public static class ManageEntitiesInInterestSphere
                 {
                     if (entering.Has<Transform, GlobalId>())
                     {
-                        var components = entering.Get<Transform, GlobalId>();
-                        protocolClient.Network.EnqueueOutboundMessage(
-                            new SpawnEntity(
-                                components.t1.Id,
-                                components.t0.Position,
-                                components.t0.Rotation.Y
+                        var baseComponents = entering.Get<Transform, GlobalId>();
+                        ref var namedEntity = ref entering.TryGetRef<NamedEntity>(out var isNamed);
+
+                        var message = isNamed
+                            ? new SpawnPlayerEntity(
+                                baseComponents.t1.Id,
+                                baseComponents.t0.Position,
+                                baseComponents.t0.Rotation.Y,
+                                namedEntity.Name
                             )
-                        );
+                            : new SpawnEntity(
+                                baseComponents.t1.Id,
+                                baseComponents.t0.Position,
+                                baseComponents.t0.Rotation.Y
+
+                            );
+
+                        protocolClient.Network.EnqueueOutboundMessage(message);
                     }
                 }
 

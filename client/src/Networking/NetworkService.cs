@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using Godot;
@@ -43,6 +44,12 @@ public partial class NetworkService : Node
         var (playerName, attempt) = ((string, int))evtArgs.UserToken!;
         if (evtArgs.SocketError != SocketError.Success)
         {
+            if (evtArgs.SocketError == SocketError.ConnectionRefused)
+            {
+                GD.PrintErr($"Unable to connect to server ... Actively refused.");
+                return;
+            }
+
             if (attempt >= 5)
             {
                 GD.PrintErr("Unable to connect to server [5/5] ... Giving up.");

@@ -17,6 +17,7 @@
     <ItemGroup>
       <PackageReference Include="Arch" />
       <PackageReference Include="Irrelephant.Outcast.Networking.Protocol" />
+      <PackageReference Include="Irrelephant.Outcast.Networking.Protocol.Abstractions" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" />
       <PackageReference Include="Irrelephant.Outcast.Networking.Transport" />
     </ItemGroup>
