@@ -141,6 +141,10 @@ public class TcpTransportHandler : ITransportHandler
         var isAsync = socket.ReceiveAsync(_socketAsyncEventArgs);
         if (!isAsync)
         {
+            if (_socketAsyncEventArgs.SocketError != SocketError.Success)
+            {
+                ProcessDisconnect();
+            }
             ProcessReceive(_socketAsyncEventArgs);
         }
     }
@@ -171,6 +175,10 @@ public class TcpTransportHandler : ITransportHandler
             var isAsync = socket.SendAsync(_socketAsyncEventArgs);
             if (!isAsync)
             {
+                if (_socketAsyncEventArgs.SocketError != SocketError.Success)
+                {
+                    ProcessDisconnect();
+                }
                 ProcessTransmit(socketArgs);
             }
         }
