@@ -39,6 +39,9 @@ public class DefaultProtocolMessageQueue(
     public void Transmit() =>
         transportHandler.Transmit();
 
+    /// <inheritdoc/>
+    public DateTime LastNetworkActivity => transportHandler.LastNetworkActivity;
+
     public void Dispose()
     {
         transportHandler.Dispose();

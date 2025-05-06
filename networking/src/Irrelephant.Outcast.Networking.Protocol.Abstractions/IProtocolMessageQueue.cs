@@ -32,4 +32,9 @@ public interface IProtocolMessageQueue : IDisposable
     /// Initiates `Transmit` operations on the underlying transport, flushing the outbound message queue.
     /// </summary>
     public void Transmit();
+
+    /// <summary>
+    /// Timestamp of the last recorded network activity on this message queue.
+    /// </summary>
+    public DateTime LastNetworkActivity { get; }
 }
