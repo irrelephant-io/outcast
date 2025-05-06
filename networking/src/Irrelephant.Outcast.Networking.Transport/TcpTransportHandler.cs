@@ -344,6 +344,8 @@ public class TcpTransportHandler : ITransportHandler
 
     public void Dispose()
     {
+        _socketAsyncEventArgs.AcceptSocket?.Dispose();
+        _socketAsyncEventArgs.ConnectSocket?.Dispose();
         _socketAsyncEventArgs.Dispose();
     }
 }
