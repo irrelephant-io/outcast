@@ -14,7 +14,9 @@ public class ServerNetworkService(
 {
     private readonly TaskCompletionSource _completionSource = new();
 
-    public readonly ConcurrentBag<ProtocolClient> ActiveClients = new();
+    public readonly List<ProtocolClient> ActiveClients = new();
+
+    private Lock _clientAcceptLock = new();
 
     private readonly Socket _listenSocket = new(
         AddressFamily.InterNetworkV6,
@@ -58,8 +60,10 @@ public class ServerNetworkService(
     {
         var handler = TcpTransportHandler.FromSocketAsyncEventArgs(acceptArgs);
         var protocolQueue = new ProtocolClient(handler, options.Value.MessageCodec);
-        handler.Closed += (sender, _) => ((ITransportHandler)sender!).Dispose();
-        ActiveClients.Add(protocolQueue);
+        lock (_clientAcceptLock)
+        {
+            ActiveClients.Add(protocolQueue);
+        }
         StartAccept(_listenSocket);
     }
 
@@ -74,10 +78,15 @@ public class ServerNetworkService(
     public ValueTask DisposeAsync()
     {
         _listenSocket.Dispose();
-        while (ActiveClients.TryTake(out var protocolQueue))
+
+        lock (_clientAcceptLock)
         {
-            protocolQueue.Dispose();
+            foreach (var client in ActiveClients)
+            {
+                client.Dispose();
+            }
         }
+
         return ValueTask.CompletedTask;
     }
 }

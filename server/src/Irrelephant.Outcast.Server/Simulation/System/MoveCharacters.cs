@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using Arch.Core;
 using Irrelephant.Outcast.Server.Simulation.Components;
-using Irrelephant.Outcast.Server.Simulation.Space;
 
 namespace Irrelephant.Outcast.Server.Simulation.System;
 

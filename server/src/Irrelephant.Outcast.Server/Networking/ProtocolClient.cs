@@ -16,12 +16,23 @@ public class ProtocolClient(
     /// </summary>
     public bool IsAttached { get; set; }
 
-    public void EnsureAttached(OutcastWorld world)
+    /// <summary>
+    /// Shows whether the client has concluded protocol communications and is ready to be detached from simulation.
+    /// </summary>
+    public bool IsReadyToDetach { get; set; }
+
+    public void EnsureAttached(OutcastWorld world, ServerNetworkService networkService)
     {
         if (!IsAttached)
         {
+            Closed += (_, _) => IsReadyToDetach = true;
             IsAttached = true;
             world.AttachClient(this);
         }
+    }
+
+    public void EnsureDetached(OutcastWorld world)
+    {
+        world.DetachClient(this);
     }
 }

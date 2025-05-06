@@ -1,4 +1,5 @@
-﻿using Arch.Core;
+﻿using System.Collections.Concurrent;
+using Arch.Core;
 using Irrelephant.Outcast.Server.Simulation.Components;
 using Irrelephant.Outcast.Server.Simulation.Space;
 
@@ -33,7 +34,7 @@ public class UpdateInterestSphereSystem(IPositionTracker positionTracker)
 
                 foreach (var entityWithin in sphere.EntitiesWithin)
                 {
-                    if (!entitiesInSphere.Contains(entityWithin))
+                    if (entityWithin.Has<GlobalId, DespawnMarker>() || !entitiesInSphere.Contains(entityWithin))
                     {
                         sphere.LeavingEntities.Add(entityWithin);
                     }

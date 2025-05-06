@@ -1,8 +1,9 @@
-﻿using Arch.Core;
-using Arch.Core.Utils;
+﻿using Arch.Buffer;
+using Arch.Core;
 using Irrelephant.Outcast.Server.Simulation.Components;
 using Irrelephant.Outcast.Server.Simulation.Space;
 using Irrelephant.Outcast.Server.Simulation.System;
+using Irrelephant.Outcast.Server.Simulation.System.EntityLifecycle;
 using Irrelephant.Outcast.Server.Simulation.System.Networking;
 using Irrelephant.Outcast.Server.Storage;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,7 @@ public class OutcastWorld : IDisposable
     private readonly World _world;
 
     private readonly IPositionTracker _positionTracker;
+    private readonly EntitySpawner _entitySpawner;
 
     private readonly UpdateInterestSphereSystem _updateInterestSphereSystem;
     private readonly ProcessNetworkMessagesSystem _processNetworkMessagesSystem;
@@ -37,9 +39,10 @@ public class OutcastWorld : IDisposable
         logger.LogInformation("Initialising Outcast world...");
         _world = World.Create();
         _positionTracker = new NaivePositionTracker();
+        _entitySpawner = new EntitySpawner(_world, _positionTracker);
 
         _updateInterestSphereSystem = new UpdateInterestSphereSystem(_positionTracker);
-        _processNetworkMessagesSystem = new ProcessNetworkMessagesSystem(_positionTracker);
+        _processNetworkMessagesSystem = new ProcessNetworkMessagesSystem(_entitySpawner);
     }
 
     public async Task LoadWorldAsync()
@@ -64,14 +67,33 @@ public class OutcastWorld : IDisposable
         );
     }
 
+    public void DetachClient(Networking.ProtocolClient clientToDetach)
+    {
+        var allClients = new QueryDescription().WithAll<ProtocolClient>();
+        var commandBuffer = new CommandBuffer();
+        _world.Query(
+            in allClients,
+            (Entity entity, ref ProtocolClient client) =>
+            {
+                if (client.Network == clientToDetach)
+                {
+                    _entitySpawner.DespawnPlayer(ref entity, ref client, commandBuffer);
+                }
+            }
+        );
+        commandBuffer.Playback(_world);
+    }
+
     public void Simulate()
     {
+        NetworkHeartbeatSystem.Run(_world);
         _updateInterestSphereSystem.RunEarlyUpdate(_world);
         _processNetworkMessagesSystem.Run(_world);
         ManageEntitiesInInterestSphere.Run(_world);
         MoveCharacters.Run(_world, 0.1f);
         UpdateNetworkCharacterStatus.Run(_world);
         _updateInterestSphereSystem.RunLateUpdate(_world);
+        DeleteEntitiesSystem.Run(_world);
     }
 
     public void Dispose()

@@ -25,8 +25,4 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Irrelephant.Outcast.Server.Data\Irrelephant.Outcast.Server.Data.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Simulation\System\EntityLifecycle\" />
-    </ItemGroup>
 </Project>

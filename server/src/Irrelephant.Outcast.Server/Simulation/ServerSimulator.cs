@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using Irrelephant.Outcast.Server.Networking;
 using Irrelephant.Outcast.Server.Simulation.Diagnostics;
+using Irrelephant.Outcast.Server.Simulation.System.Networking;
 using Microsoft.Extensions.Logging;
+using ProtocolClient = Irrelephant.Outcast.Server.Simulation.Components.ProtocolClient;
 
 namespace Irrelephant.Outcast.Server.Simulation;
 
@@ -63,7 +65,15 @@ public class ServerSimulator(
     private void ProcessWorldSim()
     {
         _simStopwatch.Restart();
-        world.Simulate();
+        try
+        {
+            world.Simulate();
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "World simulation failed.");
+        }
+
         _simStopwatch.Stop();
         _simTime.Sample(_simStopwatch.ElapsedTicks);
     }
@@ -79,13 +89,33 @@ public class ServerSimulator(
         _networkTxTime.Sample(_networkTxStopwatch.ElapsedTicks);
     }
 
+    private readonly IList<Networking.ProtocolClient> _clientsToDetach = [];
+
     private void ProcessNetworkRx()
     {
         _networkRxStopwatch.Restart();
         foreach (var client in network.ActiveClients)
         {
-            client.EnsureAttached(world);
-            client.Receive();
+            if (client.IsReadyToDetach)
+            {
+                client.EnsureDetached(world);
+                _clientsToDetach.Add(client);
+            }
+            else
+            {
+                client.EnsureAttached(world, network);
+                client.Receive();
+            }
+        }
+
+        if (_clientsToDetach.Count > 0)
+        {
+            foreach (var client in _clientsToDetach)
+            {
+                network.ActiveClients.Remove(client);
+                client.Dispose();
+            }
+            _clientsToDetach.Clear();
         }
         _networkRxStopwatch.Stop();
         _networkRxTime.Sample(_networkTxStopwatch.ElapsedTicks);

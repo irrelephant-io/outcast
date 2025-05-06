@@ -16,8 +16,3 @@ public struct ProtocolClient(Networking.ProtocolClient protocolClient)
 
     public readonly InterestSphere InterestSphere = new();
 }
-
-public struct NetworkSessionId
-{
-    public Guid Id;
-}

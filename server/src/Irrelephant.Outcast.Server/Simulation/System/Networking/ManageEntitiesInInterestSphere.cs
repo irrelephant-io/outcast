@@ -41,11 +41,11 @@ public static class ManageEntitiesInInterestSphere
 
                 foreach (var leaving in protocolClient.InterestSphere.LeavingEntities)
                 {
-                    if (leaving.Has<Transform, GlobalId>())
+                    if (leaving.Has<GlobalId>())
                     {
-                        var components = leaving.Get<Transform, GlobalId>();
+                        var gid = leaving.Get<GlobalId>();
                         protocolClient.Network.EnqueueOutboundMessage(
-                            new DespawnEntity(components.t1.Id)
+                            new DespawnEntity(gid.Id)
                         );
                     }
                 }
