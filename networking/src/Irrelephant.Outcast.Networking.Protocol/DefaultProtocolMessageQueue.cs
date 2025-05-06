@@ -7,17 +7,31 @@ using Irrelephant.Outcast.Networking.Transport.Abstractions;
 namespace Irrelephant.Outcast.Networking.Protocol;
 
 /// <inheritdoc/>
-public class DefaultProtocolMessageQueue(
-    ITransportHandler transportHandler,
-    IMessageCodec codec
-) : IProtocolMessageQueue
+public class DefaultProtocolMessageQueue : IProtocolMessageQueue
 {
+    private readonly ITransportHandler _transportHandler;
+    private readonly IMessageCodec _codec;
+
+    public DefaultProtocolMessageQueue(
+        ITransportHandler transportHandler,
+        IMessageCodec messageCodec)
+    {
+        _transportHandler = transportHandler;
+        _codec = messageCodec;
+        _transportHandler.Closed += (_, _) =>
+        {
+            Closed?.Invoke(this, EventArgs.Empty);
+        };
+    }
+
+    public event EventHandler? Closed;
+
     /// <inheritdoc/>
     public bool TryDequeueInboundMessage([NotNullWhen(true)] out Message? inboundMessage)
     {
-        if (transportHandler.InboundMessages.TryDequeue(out var inboundTlv))
+        if (_transportHandler.InboundMessages.TryDequeue(out var inboundTlv))
         {
-            inboundMessage = codec.Decode(inboundTlv);
+            inboundMessage = _codec.Decode(inboundTlv);
             return true;
         }
 
@@ -27,30 +41,30 @@ public class DefaultProtocolMessageQueue(
 
     /// <inheritdoc/>
     public void EnqueueOutboundMessage(Message message) =>
-        transportHandler.EnqueueOutboundMessage(
-            codec.Encode(message)
+        _transportHandler.EnqueueOutboundMessage(
+            _codec.Encode(message)
         );
 
     /// <inheritdoc/>
     public void Receive() =>
-        transportHandler.Receive();
+        _transportHandler.Receive();
 
     /// <inheritdoc/>
     public void Transmit() =>
-        transportHandler.Transmit();
+        _transportHandler.Transmit();
 
     /// <inheritdoc/>
-    public DateTime LastNetworkActivity => transportHandler.LastNetworkActivity;
+    public DateTime LastNetworkActivity => _transportHandler.LastNetworkActivity;
 
     public void Dispose()
     {
-        transportHandler.Dispose();
+        _transportHandler.Dispose();
     }
 
     /// <inheritdoc/>
     public void EnqueueHeartbeatMessage()
     {
-        transportHandler.EnqueueOutboundMessage(
+        _transportHandler.EnqueueOutboundMessage(
             new TlvMessage(
                 Header: new TlvHeader(0, 0),
                 MessageValue: Memory<byte>.Empty

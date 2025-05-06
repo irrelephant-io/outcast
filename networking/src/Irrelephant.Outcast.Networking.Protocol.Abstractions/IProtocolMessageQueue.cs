@@ -8,6 +8,9 @@ namespace Irrelephant.Outcast.Networking.Protocol.Abstractions;
 /// </summary>
 public interface IProtocolMessageQueue : IDisposable
 {
+    /// Is emitted when the protocol connection is closed due to disconnection or error.
+    public event EventHandler? Closed;
+
     /// <summary>
     /// Tries to dequeue a protocol message.
     /// </summary>
