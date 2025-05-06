@@ -1,6 +1,4 @@
-﻿using System.Net.Sockets;
-using FluentAssertions;
-using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
+﻿using FluentAssertions;
 using Irrelephant.Outcast.Networking.Transport;
 using Irrelephant.Outcast.Networking.Transport.Abstractions;
 

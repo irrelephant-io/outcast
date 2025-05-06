@@ -30,4 +30,9 @@ public interface ITransportHandler : IDisposable
     /// Flushes the currently enqueued outbound traffic into the transport.
     /// </summary>
     void Transmit();
+
+    /// <summary>
+    /// Timestamp of the last recorded network activity on this handler.
+    /// </summary>
+    DateTime LastNetworkActivity { get; }
 }

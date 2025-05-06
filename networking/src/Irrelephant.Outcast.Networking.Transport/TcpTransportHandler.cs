@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Sockets;
-using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer;
 using Irrelephant.Outcast.Networking.Transport.Abstractions;
 
 namespace Irrelephant.Outcast.Networking.Transport;
@@ -90,6 +89,11 @@ public class TcpTransportHandler : ITransportHandler
     private readonly SemaphoreSlim _asyncOperationSemaphore = new(1, 1);
 
     /// <summary>
+    /// Timestamp of the last recorded network activity on this handler.
+    /// </summary>
+    public DateTime LastNetworkActivity { get; private set; } = DateTime.MinValue;
+
+    /// <summary>
     /// Creates a transport handler out of a connected or accepted socket.
     /// </summary>
     /// <param name="socketArgs">
@@ -132,6 +136,7 @@ public class TcpTransportHandler : ITransportHandler
             return;
         }
 
+        LastNetworkActivity = DateTime.UtcNow;
         _socketAsyncEventArgs.SetBuffer(SocketIoBuffer, 0, SocketIoBuffer.Length);
         var isAsync = socket.ReceiveAsync(_socketAsyncEventArgs);
         if (!isAsync)
@@ -161,6 +166,7 @@ public class TcpTransportHandler : ITransportHandler
         var writeBuffer = PrepareOutboundBuffer();
         if (!writeBuffer.IsEmpty)
         {
+            LastNetworkActivity = DateTime.UtcNow;
             _socketAsyncEventArgs.SetBuffer(writeBuffer);
             var isAsync = socket.SendAsync(_socketAsyncEventArgs);
             if (!isAsync)
@@ -198,6 +204,8 @@ public class TcpTransportHandler : ITransportHandler
 
     private void OnSocketOperationCompleted(object? sender, SocketAsyncEventArgs socketArgs)
     {
+        LastNetworkActivity = DateTime.UtcNow;
+
         if (socketArgs.BytesTransferred == 0 || socketArgs.SocketError != SocketError.Success)
         {
             ProcessDisconnect();
