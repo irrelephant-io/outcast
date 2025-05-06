@@ -37,4 +37,9 @@ public interface IProtocolMessageQueue : IDisposable
     /// Timestamp of the last recorded network activity on this message queue.
     /// </summary>
     public DateTime LastNetworkActivity { get; }
+
+    /// <summary>
+    /// Enqueues a minimal network message to ensure underlying channel liveness.
+    /// </summary>
+    void EnqueueHeartbeatMessage();
 }

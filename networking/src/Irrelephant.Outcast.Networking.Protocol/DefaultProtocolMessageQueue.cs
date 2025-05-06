@@ -46,4 +46,15 @@ public class DefaultProtocolMessageQueue(
     {
         transportHandler.Dispose();
     }
+
+    /// <inheritdoc/>
+    public void EnqueueHeartbeatMessage()
+    {
+        transportHandler.EnqueueOutboundMessage(
+            new TlvMessage(
+                Header: new TlvHeader(0, 0),
+                MessageValue: Memory<byte>.Empty
+            )
+        );
+    }
 }
