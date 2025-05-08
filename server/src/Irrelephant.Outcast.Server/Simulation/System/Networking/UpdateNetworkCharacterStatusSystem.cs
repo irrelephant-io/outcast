@@ -3,7 +3,7 @@ using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Simulation.Components;
 
-namespace Irrelephant.Outcast.Server.Simulation.System;
+namespace Irrelephant.Outcast.Server.Simulation.System.Networking;
 
 public static class UpdateNetworkCharacterStatus
 {
