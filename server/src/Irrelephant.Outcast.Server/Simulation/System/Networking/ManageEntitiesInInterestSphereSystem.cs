@@ -2,10 +2,13 @@
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Simulation.Components;
+using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
+using Irrelephant.Outcast.Server.Simulation.Components.Communication;
+using Irrelephant.Outcast.Server.Simulation.Components.Data;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.Networking;
 
-public static class ManageEntitiesInInterestSphere
+public static class ManageEntitiesInInterestSphereSystem
 {
     public static void Run(World world)
     {
@@ -19,7 +22,7 @@ public static class ManageEntitiesInInterestSphere
                     if (entering.Has<Transform, GlobalId>())
                     {
                         var baseComponents = entering.Get<Transform, GlobalId>();
-                        ref var namedEntity = ref entering.TryGetRef<NamedEntity>(out var isNamed);
+                        ref var namedEntity = ref entering.TryGetRef<EntityName>(out var isNamed);
 
                         var message = isNamed
                             ? new SpawnPlayerEntity(
@@ -32,7 +35,6 @@ public static class ManageEntitiesInInterestSphere
                                 baseComponents.t1.Id,
                                 baseComponents.t0.Position,
                                 baseComponents.t0.Rotation.Y
-
                             );
 
                         protocolClient.Network.EnqueueOutboundMessage(message);

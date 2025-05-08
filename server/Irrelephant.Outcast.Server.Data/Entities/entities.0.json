@@ -1,12 +1,12 @@
 [
   {
-    "id": "7ae41061-2b0e-44e5-9a55-b2e321223e81",
+    "archetypeId": "00000000-0000-0000-0000-0bb67f5a3bee",
     "transform": {
       "position": [ 467, 1168, -622 ]
     }
   },
   {
-    "id": "56f3930d-64d5-4334-a44f-49683f7e2e92",
+    "archetypeId": "00000000-0000-0000-0000-0bb67f5a3bee",
     "transform": {
       "position": [ 466, 1168, -627 ]
     }

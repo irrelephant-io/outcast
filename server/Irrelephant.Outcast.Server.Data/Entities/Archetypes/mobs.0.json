@@ -1,0 +1,21 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-0bb67f5a3bee",
+    "maxHealth": 30,
+    "isAggressive": false,
+    "level": 1,
+    "attackDamage": 2,
+    "attackCooldown": 15,
+    "name": "Passive Mob"
+  },
+
+  {
+    "id": "00000000-0000-0000-0000-d55f6c432a6f",
+    "maxHealth": 35,
+    "isAggressive": true,
+    "level": 2,
+    "attackDamage": 3,
+    "attackCooldown": 15,
+    "name": "Aggressive Mob"
+  }
+]

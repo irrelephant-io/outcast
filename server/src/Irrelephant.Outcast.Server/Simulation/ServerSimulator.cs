@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics;
 using Irrelephant.Outcast.Server.Networking;
 using Irrelephant.Outcast.Server.Simulation.Diagnostics;
-using Irrelephant.Outcast.Server.Simulation.System.Networking;
 using Microsoft.Extensions.Logging;
-using ProtocolClient = Irrelephant.Outcast.Server.Simulation.Components.ProtocolClient;
 
 namespace Irrelephant.Outcast.Server.Simulation;
 

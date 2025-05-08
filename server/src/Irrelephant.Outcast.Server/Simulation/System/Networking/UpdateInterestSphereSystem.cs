@@ -1,6 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using Arch.Core;
 using Irrelephant.Outcast.Server.Simulation.Components;
+using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
+using Irrelephant.Outcast.Server.Simulation.Components.Communication;
+using Irrelephant.Outcast.Server.Simulation.Components.Data;
 using Irrelephant.Outcast.Server.Simulation.Space;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.Networking;

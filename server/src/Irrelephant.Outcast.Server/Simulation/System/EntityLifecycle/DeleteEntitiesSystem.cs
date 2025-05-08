@@ -1,5 +1,6 @@
 ﻿using Arch.Core;
 using Irrelephant.Outcast.Server.Simulation.Components;
+using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.EntityLifecycle;
 

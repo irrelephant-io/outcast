@@ -4,11 +4,19 @@ using Arch.Core;
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Simulation.Components;
+using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
+using Irrelephant.Outcast.Server.Simulation.Components.Communication;
+using Irrelephant.Outcast.Server.Simulation.Components.Data;
 using Irrelephant.Outcast.Server.Simulation.Space;
+using Irrelephant.Outcast.Server.Storage;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.EntityLifecycle;
 
-public class EntitySpawner(World world, IPositionTracker positionTracker)
+public class EntitySpawner(
+    World world,
+    ArchetypeRegistry archetypeRegistry,
+    IPositionTracker positionTracker
+)
 {
     private static readonly Vector3 DefaultSpawnPosition = new(467, 1168, -622);
 
@@ -22,8 +30,10 @@ public class EntitySpawner(World world, IPositionTracker positionTracker)
             entity,
             new GlobalId { Id = entityId },
             new Transform { Position = DefaultSpawnPosition },
-            new Movable { Position = DefaultSpawnPosition, MoveSpeed = 5.0f },
-            new NamedEntity { Name = name }
+            new Movement { TargetPosition = DefaultSpawnPosition, MoveSpeed = 5.0f },
+            new EntityName { Name = name },
+            new Health { MaxHealth = 100, CurrentHealth = 100 },
+            new Attack { Damage = 5, AttackCooldownRemaining = 10, AttackCooldown = 0, Range = 2.0f }
         );
         positionTracker.Track(entity);
     }
@@ -52,5 +62,19 @@ public class EntitySpawner(World world, IPositionTracker positionTracker)
 
         commandBuffer.Add(entity, new DespawnMarker());
         positionTracker.Untrack(entity);
+    }
+
+    public void SpawnEntity(
+        Guid entityArchetypeId,
+        Vector3 position
+    )
+    {
+        var entity = world.Create();
+        archetypeRegistry.SetArchetype(ref entity, entityArchetypeId, position);
+        entity.Add(
+            new GlobalId { Id = Guid.NewGuid() },
+            new Transform { Position = position }
+        );
+        positionTracker.Track(entity);
     }
 }

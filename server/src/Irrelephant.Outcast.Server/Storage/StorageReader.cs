@@ -15,23 +15,37 @@ public class StorageReader(ILogger<StorageReader> logger)
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public async IAsyncEnumerable<(GlobalId, Transform)> ReadEntitiesAsync(string regionName)
+    public async IAsyncEnumerable<PersistedEntity> ReadEntitiesAsync()
     {
-        logger.LogDebug("Reading region {RegionName}.", regionName);
-
-        await using FileStream stream = File.OpenRead($"Entities/{regionName}");
-        var result = await JsonSerializer.DeserializeAsync<PersistedEntity[]>(stream, _jsonSerializerOptions);
-        foreach (var entity in result!)
+        foreach (var entityFile in Directory.EnumerateFiles("Entities/", "*.json", SearchOption.TopDirectoryOnly))
         {
-            yield return
-            (
-                new GlobalId { Id = entity.Id },
-                new Transform
-                {
-                    Position = entity.Transform.Position,
-                    Rotation = entity.Transform.Rotation
-                }
-            );
+            logger.LogDebug("Reading entity file `{EntityFileName}`.", entityFile);
+            await using FileStream stream = File.OpenRead(entityFile);
+            var result = await JsonSerializer.DeserializeAsync<PersistedEntity[]>(stream, _jsonSerializerOptions);
+            foreach (var entity in result!)
+            {
+                yield return entity;
+            }
+        }
+    }
+
+    public async IAsyncEnumerable<EntityArchetype> ReadArchetypesAsync()
+    {
+        var allArchetypeFiles = Directory.EnumerateFiles(
+            "Entities/Archetypes/",
+            "*.json",
+            SearchOption.TopDirectoryOnly
+        );
+
+        foreach (var archetypeFile in allArchetypeFiles)
+        {
+            logger.LogDebug("Reading entity archetype file `{EntityArchetypeFileName}`.", archetypeFile);
+            await using FileStream stream = File.OpenRead(archetypeFile);
+            var result = await JsonSerializer.DeserializeAsync<EntityArchetype[]>(stream, _jsonSerializerOptions);
+            foreach (var archetype in result!)
+            {
+                yield return archetype;
+            }
         }
     }
 }

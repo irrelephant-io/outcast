@@ -16,8 +16,8 @@ public class PersistedEntityTransform
 [DataContract]
 public class PersistedEntity
 {
-    [DataMember(Name = "id", IsRequired = true)]
-    public Guid Id { get; set; }
+    [DataMember(Name = "archetypeId", IsRequired = true)]
+    public Guid ArchetypeId { get; set; }
 
     [DataMember(Name = "transform", IsRequired = true)]
     public required PersistedEntityTransform Transform { get; set; }

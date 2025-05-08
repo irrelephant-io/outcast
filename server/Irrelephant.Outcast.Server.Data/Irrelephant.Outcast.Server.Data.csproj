@@ -11,6 +11,10 @@
       <Content Include="Entities\entities.0.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="Entities\Archetypes\mobs.0.json" />
+      <Content Include="Entities\Archetypes\mobs.0.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

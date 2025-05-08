@@ -2,6 +2,7 @@
 using Arch.Core;
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Server.Simulation.Components;
+using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 
 namespace Irrelephant.Outcast.Server.Simulation.Space;
 

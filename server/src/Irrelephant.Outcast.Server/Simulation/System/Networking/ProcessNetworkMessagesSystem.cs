@@ -1,9 +1,10 @@
-﻿using System.Numerics;
-using Arch.Core;
+﻿using Arch.Core;
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Simulation.Components;
-using Irrelephant.Outcast.Server.Simulation.Space;
+using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
+using Irrelephant.Outcast.Server.Simulation.Components.Communication;
+using Irrelephant.Outcast.Server.Simulation.Components.Data;
 using Irrelephant.Outcast.Server.Simulation.System.EntityLifecycle;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.Networking;
@@ -41,10 +42,10 @@ public class ProcessNetworkMessagesSystem(
         InitiateMoveRequest move
     )
     {
-        if (world.Has<Movable, GlobalId>(entity))
+        if (world.Has<Movement, GlobalId>(entity))
         {
-            var movable = world.Get<Movable, GlobalId>(entity);
-            movable.t0.Position = move.MovePosition;
+            var movable = world.Get<Movement, GlobalId>(entity);
+            movable.t0.TargetPosition = move.MovePosition;
 
             var moveNotice = new InitiateMoveNotice(
                 movable.t1.Id,
