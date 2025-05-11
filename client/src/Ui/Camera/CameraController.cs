@@ -1,7 +1,6 @@
 using Godot;
 using Irrelephant.Outcast.Client.Constants;
 using Irrelephant.Outcast.Client.Entities;
-using Irrelephant.Outcast.Client.Networking;
 
 namespace Irrelephant.Outcast.Client.Ui.Camera;
 
@@ -120,8 +119,10 @@ public partial class CameraController : Camera3D
             {
                 EmitSignalOnEntityClick(body.GetParent<NetworkedEntity>());
             }
-
-            EmitSignal(SignalName.OnLeftClick, result["position"]);
+            else
+            {
+                EmitSignalOnLeftClick((Vector3)result["position"]);
+            }
         }
     }
 

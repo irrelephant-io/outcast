@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Net.Sockets;
 using Godot;
@@ -9,6 +8,8 @@ namespace Irrelephant.Outcast.Client.Networking;
 
 public partial class NetworkService : Node
 {
+    public static NetworkService Instance { get; private set; } = null!;
+
     private const string ServerHostName = "dev.outcast.irrelephant.io";
     private const int ServerPort = 42069;
 
@@ -34,6 +35,11 @@ public partial class NetworkService : Node
         {
             ProcessConnect(_socketAsyncEventArgs);
         }
+    }
+
+    public override void _Ready()
+    {
+        Instance = this;
     }
 
     private void ProcessConnect(object? sender, SocketAsyncEventArgs e) =>

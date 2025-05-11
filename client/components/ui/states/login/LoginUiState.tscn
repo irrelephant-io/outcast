@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://xxyr1iqcvvst"]
+
+[ext_resource type="Script" uid="uid://bxei2mslysjnn" path="res://src/Ui/Interface/UiState/Login/LoginUiState.cs" id="1_ouoky"]
+[ext_resource type="PackedScene" uid="uid://bo0wrhb37pstu" path="res://components/ui/states/login/ConnectMenu.tscn" id="2_hnjlj"]
+
+[node name="LoginUiState" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ouoky")
+
+[node name="CenterContainer" parent="." instance=ExtResource("2_hnjlj")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -76.0
+offset_right = 128.0
+offset_bottom = 76.0

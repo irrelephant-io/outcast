@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=3 uid="uid://bo0wrhb37pstu"]
+
+[ext_resource type="Script" uid="uid://bu78rtvbsohk3" path="res://src/Ui/Interface/UiState/Login/ConnectMenu.cs" id="1_vytiu"]
+
+[node name="CenterContainer" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+script = ExtResource("1_vytiu")
+metadata/_edit_lock_ = true
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="Layout" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(271, 141)
+layout_mode = 2
+
+[node name="UserName" type="LineEdit" parent="PanelContainer/MarginContainer/Layout"]
+layout_mode = 2
+placeholder_text = "Account Name"
+context_menu_enabled = false
+emoji_menu_enabled = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
+
+[node name="Password" type="LineEdit" parent="PanelContainer/MarginContainer/Layout"]
+layout_mode = 2
+placeholder_text = "Password (Placeholder)"
+context_menu_enabled = false
+emoji_menu_enabled = false
+virtual_keyboard_enabled = false
+secret = true
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/Layout"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="ConnectButton" type="Button" parent="PanelContainer/MarginContainer/Layout"]
+layout_mode = 2
+text = "Enter World"
+
+[node name="RememberMe" type="CheckBox" parent="PanelContainer/MarginContainer/Layout"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Remember Me"

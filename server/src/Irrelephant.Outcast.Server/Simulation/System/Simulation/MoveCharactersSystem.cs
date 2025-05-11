@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics;
+using System.Numerics;
 using Arch.Core;
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
@@ -23,6 +24,8 @@ public static class MoveCharactersSystem
                         break;
                     case MoveState.Locked: RunLockedState(ref transform, ref movement);
                         break;
+                    default:
+                        throw new UnreachableException();
                 }
             }
         );

@@ -7,7 +7,7 @@ namespace Irrelephant.Outcast.Client.Ui.Control;
 
 public partial class PlayerController : Node
 {
-    public static PlayerController Instance { get; private set; }
+    public static PlayerController Instance { get; private set; } = null!;
 
     public Entities.PlayerEntity? ControlledPlayer { get; set; }
 

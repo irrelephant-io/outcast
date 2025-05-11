@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dnlfn1a54cboh"]
+[gd_scene load_steps=24 format=3 uid="uid://dnlfn1a54cboh"]
 
 [ext_resource type="Terrain3DTextureAsset" uid="uid://d3sskshilld2s" path="res://world/resources/ground_062_s/ground_062_s.res" id="1_03owx"]
 [ext_resource type="Terrain3DTextureAsset" uid="uid://bj2gj7perumcn" path="res://world/resources/rock_030/rock_030.res" id="2_wkp8b"]
@@ -6,9 +6,11 @@
 [ext_resource type="Script" uid="uid://c2qfmi7rf4u1v" path="res://src/Ui/Interface/UiController.cs" id="4_20pc6"]
 [ext_resource type="Script" uid="uid://uksljmp3qb2r" path="res://src/Ui/Control/PlayerController.cs" id="4_fos0i"]
 [ext_resource type="Script" uid="uid://4i0x1it37cli" path="res://src/Simulation/NetworkEntityContainer.cs" id="4_trn2v"]
+[ext_resource type="Script" uid="uid://cst03dxmj75jy" path="res://src/Ui/Interface/UiState/UiStateController.cs" id="7_20pc6"]
 [ext_resource type="Script" uid="uid://bbetady73ttq6" path="res://src/Networking/NetworkService.cs" id="7_lgr22"]
-[ext_resource type="PackedScene" uid="uid://bo0wrhb37pstu" path="res://components/ui/ConnectBox.tscn" id="7_trn2v"]
+[ext_resource type="PackedScene" uid="uid://xxyr1iqcvvst" path="res://components/ui/states/login/LoginUiState.tscn" id="8_5vvyt"]
 [ext_resource type="Script" uid="uid://dkjqc637riant" path="res://src/Networking/NetworkEarlyUpdate.cs" id="9_20pc6"]
+[ext_resource type="PackedScene" uid="uid://duj7p7ubvtn5i" path="res://components/ui/states/gameplay/GameplayUiState.tscn" id="9_c6i3y"]
 [ext_resource type="Script" uid="uid://b3jlajav3oxxv" path="res://src/Networking/NetworkLateUpdate.cs" id="10_5vvyt"]
 [ext_resource type="Script" uid="uid://cabu6506n20ts" path="res://src/Networking/NetworkServiceUpdate.cs" id="10_c6i3y"]
 
@@ -192,10 +194,10 @@ metadata/_edit_lock_ = true
 unique_name_in_owner = true
 script = ExtResource("4_trn2v")
 
-[node name="UI" type="Node" parent="." node_paths=PackedStringArray("Databox", "CameraController")]
+[node name="UI" type="Node" parent="." node_paths=PackedStringArray("CameraController", "UiStateController")]
 script = ExtResource("4_20pc6")
-Databox = NodePath("VBoxContainer/Panel/Databox")
 CameraController = NodePath("MainCamera")
+UiStateController = NodePath("UserInterface")
 
 [node name="MainCamera" parent="UI" instance=ExtResource("3_cm0pq")]
 transform = Transform3D(0.626699, 0.394975, -0.671746, 0, 0.86203, 0.506858, 0.779261, -0.317647, 0.540233, -1154.5, 1737.62, 560.694)
@@ -208,31 +210,16 @@ script = ExtResource("4_fos0i")
 CameraController = NodePath("../MainCamera")
 MoveSpeed = 3.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI"]
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Panel" type="Panel" parent="UI/VBoxContainer"]
-custom_minimum_size = Vector2(300, 200)
-layout_mode = 2
-
-[node name="ConnectBox" parent="UI/VBoxContainer/Panel" node_paths=PackedStringArray("NetworkService") instance=ExtResource("7_trn2v")]
-layout_direction = 2
-layout_mode = 1
-NetworkService = NodePath("../../../../Global/NetworkService")
-
-[node name="Databox" type="RichTextLabel" parent="UI/VBoxContainer/Panel"]
-visible = false
-clip_contents = false
-layout_mode = 1
+[node name="UserInterface" type="Control" parent="UI"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Selected Entity
-"
-metadata/_edit_use_anchors_ = true
+script = ExtResource("7_20pc6")
+LoginUiState = ExtResource("8_5vvyt")
+GameplayUiState = ExtResource("9_c6i3y")
 
 [node name="Global" type="Node" parent="."]
 

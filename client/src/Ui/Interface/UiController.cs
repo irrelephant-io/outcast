@@ -1,30 +1,37 @@
 using Godot;
+using Irrelephant.Outcast.Client.Entities;
 using Irrelephant.Outcast.Client.Ui.Camera;
+using Irrelephant.Outcast.Client.Ui.Interface.UiState;
 
 namespace Irrelephant.Outcast.Client.Ui.Interface;
 
 public partial class UiController : Node
 {
-    public static UiController Instance { get; private set; }
+    public static UiController Instance { get; private set; } = null!;
+
+    [Export] public CameraController CameraController { get; set; } = null!;
+
+    public NetworkedEntity? TargetedEntity { get; set; }
 
     [Export]
-    public RichTextLabel Databox { get; set; }
+    public UiStateController UiStateController = null!;
 
-    [Export]
-    public CameraController CameraController { get; set; }
+    [Signal]
+    public delegate void TargetUpdatedEventHandler(NetworkedEntity? entity);
 
     public override void _Ready()
     {
         Instance = this;
         CameraController.OnEntityClick += clickedEntity =>
         {
-            Databox.Text = $"Selected: {clickedEntity.RemoteId}";
+            TargetedEntity = clickedEntity;
+            EmitSignalTargetUpdated(TargetedEntity);
         };
     }
 
     public void FinishConnect()
     {
-        Databox.Visible = true;
+        UiStateController.GoToState(UiStates.Gameplay);
     }
 
 }
