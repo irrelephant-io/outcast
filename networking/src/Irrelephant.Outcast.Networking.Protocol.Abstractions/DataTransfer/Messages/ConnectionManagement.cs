@@ -13,7 +13,9 @@ public record ConnectResponse(
     float YAxisRotation
 ) : SpawnEntity(EntityId, SpawnPosition, YAxisRotation);
 
-public record DisconnectNotice(
+public record ConnectTransferComplete(Guid SessionId);
+
+public record DisconnectNotification(
     Guid SessionId,
     string Reason
 ) : Message;
