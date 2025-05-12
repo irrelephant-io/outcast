@@ -8,3 +8,5 @@ public record InitiateMoveNotice(Guid EntityId, Vector3 MovePosition) : Message;
 public record InitiateFollowNotice(Guid EntityId, Guid TargetId) : Message;
 public record MoveDoneNotice(Guid EntityId) : Message;
 public record InitiateAttackRequest(Guid EntityId) : Message;
+public record InitiateWindupNotice(Guid EntityId) : Message;
+public record DamageNotice(Guid EntityId, Guid DealerId, int Damage) : Message;
