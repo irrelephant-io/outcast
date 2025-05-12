@@ -12,21 +12,44 @@ public static class UpdateNetworkCharacterStatusSystem
     public static void Run(World world)
     {
         var allClients = new QueryDescription()
-            .WithAll<ProtocolClient, GlobalId, Transform, Movement>();
+            .WithAll<ProtocolClient, GlobalId, Transform>()
+            .WithAny<Movement, Attack>();
 
         world.Query(
             in allClients,
-            (ref ProtocolClient pc, ref GlobalId id, ref Transform transform, ref Movement movement) =>
+            (Entity entity, ref ProtocolClient pc, ref GlobalId id, ref Transform transform) =>
             {
-                SendMoveUpdate(ref pc, ref movement, ref id, ref transform);
+                ref var attack = ref entity.TryGetRef<Attack>(out var hasAttack);
+                ref var movement = ref entity.TryGetRef<Movement>(out var hasMovement);
+
+                if (hasMovement)
+                {
+                    SendMoveUpdate(ref pc, ref movement, ref id, ref transform);
+                }
+
+                if (hasAttack)
+                {
+                    SendAttackUpdate(ref pc, ref attack, ref id);
+                }
 
                 foreach (var entityWithin in pc.InterestSphere.EntitiesWithin)
                 {
-                    ref var interestSphereMovable = ref entityWithin.TryGetRef<Movement>(out var isMovable);
-                    var components = entityWithin.Get<Transform, GlobalId>();
-                    if (isMovable)
+                    ref var interestSphereMovement = ref entityWithin.TryGetRef<Movement>(
+                        out var interestSphereHasMovement
+                    );
+                    ref var interestSphereAttack = ref entityWithin.TryGetRef<Attack>(
+                        out var interestSphereHasAttack
+                    );
+                    if (interestSphereHasMovement)
                     {
-                        SendMoveUpdate(ref pc, ref interestSphereMovable, ref components.t1, ref components.t0);
+                        var components = entityWithin.Get<Transform, GlobalId>();
+                        SendMoveUpdate(ref pc, ref interestSphereMovement, ref components.t1, ref components.t0);
+                    }
+
+                    if (interestSphereHasAttack)
+                    {
+                        var gid = entityWithin.Get<GlobalId>();
+                        SendAttackUpdate(ref pc, ref interestSphereAttack, ref gid);
                     }
                 }
             }
@@ -72,9 +95,31 @@ public static class UpdateNetworkCharacterStatusSystem
             }
 
         }
-        else if (movement.State is { Current: MoveState.Idle or MoveState.Locked, DidStateChange: true })
+        else if (movement.State is {
+             Current: MoveState.Idle or MoveState.Locked or MoveState.Stopped,
+             DidStateChange: true
+        })
         {
             receiver.Network.EnqueueOutboundMessage(new MoveDoneNotice(id.Id));
+        }
+    }
+
+    private static void SendAttackUpdate(
+        ref ProtocolClient receiver,
+        ref Attack attack,
+        ref GlobalId id
+    )
+    {
+        if (attack.State is { Current: AttackState.Windup, DidStateChange: true })
+        {
+            receiver.Network.EnqueueOutboundMessage(new InitiateWindupNotice(id.Id));
+        }
+
+        foreach (var completedAttack in attack.CompletedAttacks)
+        {
+            receiver.Network.EnqueueOutboundMessage(
+                new DamageNotice(completedAttack.EntityId, id.Id, completedAttack.Damage)
+            );
         }
     }
 }

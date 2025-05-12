@@ -2,6 +2,7 @@
 using Arch.Core;
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
+using Irrelephant.Outcast.Server.Simulation.Components.Data;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.Simulation;
 
@@ -14,19 +15,28 @@ public static class AttackSystem
             in allAttackersQuery,
             static (Entity entity, ref Attack attack, ref Transform transform) =>
             {
+                attack.ClearCompletedAttacks();
                 attack.State.ClearStateChange();
-                switch (attack.State.Current)
+
+                while (attack.State.EnterTick())
                 {
-                    case AttackState.Ready: RunReadyState(ref entity, ref attack, ref transform);
-                        break;
-                    case AttackState.Windup: RunWindupState(ref attack);
-                        break;
-                    case AttackState.Damage: RunDamageState(ref attack);
-                        break;
-                    case AttackState.Recovery: RunRecoveryState(ref entity, ref attack);
-                        break;
-                    default:
-                        throw new UnreachableException();
+                    switch (attack.State.Current)
+                    {
+                        case AttackState.Ready:
+                            RunReadyState(ref entity, ref attack, ref transform);
+                            break;
+                        case AttackState.Windup:
+                            RunWindupState(ref attack);
+                            break;
+                        case AttackState.Damage:
+                            RunDamageState(ref attack);
+                            break;
+                        case AttackState.Recovery:
+                            RunRecoveryState(ref entity, ref attack);
+                            break;
+                        default:
+                            throw new UnreachableException();
+                    }
                 }
             }
         );
@@ -49,7 +59,8 @@ public static class AttackSystem
             if (isInRange)
             {
                 attack.State.GoToState(AttackState.Windup);
-                attack.AttackCooldownRemaining = attack.Cooldown;
+                attack.AttackCooldownRemaining = attack.AttackCooldown;
+                attack.LockedInTarget = attack.AttackTarget;
                 if (isMovable)
                 {
                     attackerMovable.LockMovement();
@@ -59,7 +70,7 @@ public static class AttackSystem
             {
                 if (isMovable)
                 {
-                    attackerMovable.FollowEntity = attack.AttackTarget;
+                    attackerMovable.SetFollowEntity(attack.AttackTarget.Value, attack.Range);
                 }
             }
         }
@@ -77,13 +88,14 @@ public static class AttackSystem
 
     private static void RunDamageState(ref Attack attack)
     {
-        attack.AttackCooldownRemaining--;
-        ref var targetHealth = ref attack.AttackTarget!.Value.TryGetRef<Health>(out var hasHealth);
+        ref var targetHealth = ref attack.LockedInTarget!.Value.TryGetRef<Health>(out var hasHealth);
+        ref var targetGid = ref attack.LockedInTarget!.Value.TryGetRef<GlobalId>(out _);
+
         if (hasHealth)
         {
             targetHealth.CurrentHealth -= attack.Damage;
         }
-
+        attack.CompletedAttacks.Add(new AttackDamageDealt { EntityId = targetGid.Id, Damage = attack.Damage });
         attack.State.GoToState(AttackState.Recovery);
     }
 
@@ -98,6 +110,8 @@ public static class AttackSystem
             {
                 attackerMovable.UnlockMovement();
             }
+
+            attack.LockedInTarget = null;
         }
     }
 }

@@ -55,7 +55,7 @@ public class ServerSimulator(
         {
             logger.LogWarning(
                 "Tick processing took longer than fixed tick time by {DeltaTick}ms. Is the server overloaded?",
-                -sleepTime.Milliseconds
+                -sleepTime.TotalMilliseconds
             );
         }
     }

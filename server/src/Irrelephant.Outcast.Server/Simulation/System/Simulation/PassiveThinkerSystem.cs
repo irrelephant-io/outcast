@@ -32,13 +32,16 @@ public static class PassiveThinkerSystem
 
     private static void Roam(ref Behavior behavior, ref Movement movement)
     {
+        return;
         var roamDistanceFromCenter = Random.Shared.NextSingle() * behavior.RoamDistance;
         var roamAngle = Random.Shared.NextDouble() * Math.Tau;
 
-        movement.TargetPosition = behavior.AnchorPosition + new Vector3(
-            roamDistanceFromCenter * (float)Math.Cos(roamAngle),
-            0,
-            roamDistanceFromCenter * (float)Math.Sin(roamAngle)
+        movement.SetMoveToPosition(
+            behavior.AnchorPosition + new Vector3(
+                roamDistanceFromCenter * (float)Math.Cos(roamAngle),
+                0,
+                roamDistanceFromCenter * (float)Math.Sin(roamAngle)
+            )
         );
     }
 }

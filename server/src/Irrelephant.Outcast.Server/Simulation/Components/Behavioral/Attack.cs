@@ -10,19 +10,38 @@ public enum AttackState
     Recovery = 3
 }
 
-public struct Attack
+public struct AttackDamageDealt
+{
+    public Guid EntityId;
+    public int Damage;
+}
+
+public struct Attack()
 {
     public StateMachine<AttackState> State;
 
     public int Damage;
-    public int Cooldown;
 
     public int AttackCooldown;
     public int AttackCooldownRemaining;
 
     public Arch.Core.Entity? AttackTarget;
 
+    public Arch.Core.Entity? LockedInTarget;
+
     public float Range;
+
+    public List<AttackDamageDealt> CompletedAttacks = new();
+
+    public void ClearAttackCommand()
+    {
+        AttackTarget = null;
+    }
+
+    public void ClearCompletedAttacks()
+    {
+        CompletedAttacks.Clear();
+    }
 }
 
 public struct DespawnMarker : IComponent;

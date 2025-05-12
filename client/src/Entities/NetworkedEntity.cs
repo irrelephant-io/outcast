@@ -12,6 +12,7 @@ public partial class NetworkedEntity : Entity
 
     public Vector3 LastServerPosition { get; set; }
     public float LastServerYRotation { get; set; }
+    public string EntityName { get; set; } = "";
 
     [Export]
     public Label3D EntityLabel { get; set; } = null!;
@@ -38,6 +39,7 @@ public partial class NetworkedEntity : Entity
 
     public void SetEntityName(string entityName)
     {
+        EntityName = entityName;
         EntityLabel.Text = entityName;
     }
 

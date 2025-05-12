@@ -16,16 +16,25 @@ public static class MoveCharactersSystem
             (ref Transform transform, ref Movement movement) =>
             {
                 movement.State.ClearStateChange();
-                switch (movement.State.Current)
+                while (movement.State.EnterTick())
                 {
-                    case MoveState.Idle: RunIdleState(ref transform, ref movement);
-                        break;
-                    case MoveState.Moving: RunMovingState(ref transform, ref movement, deltaTime);
-                        break;
-                    case MoveState.Locked: RunLockedState(ref transform, ref movement);
-                        break;
-                    default:
-                        throw new UnreachableException();
+                    switch (movement.State.Current)
+                    {
+                        case MoveState.Idle:
+                            RunIdleState(ref transform, ref movement);
+                            break;
+                        case MoveState.Moving:
+                            RunMovingState(ref transform, ref movement, deltaTime);
+                            break;
+                        case MoveState.Stopped:
+                            RunStoppedState(ref transform, ref movement);
+                            break;
+                        case MoveState.Locked:
+                            RunLockedState(ref transform, ref movement);
+                            break;
+                        default:
+                            throw new UnreachableException();
+                    }
                 }
             }
         );
@@ -34,13 +43,31 @@ public static class MoveCharactersSystem
     private static void RunLockedState(ref Transform transform, ref Movement movement)
     {
         var target = GetTargetPosition(ref movement);
+        if (!target.HasValue || !movement.FollowEntity.HasValue)
+        {
+            return;
+        }
+
+        // Only rotate towards target entity when movement is locked.
+        var deltaToTarget = target.Value - transform.Position;
+        transform.Rotation = Vector3.UnitY * (float)Math.Atan2(-deltaToTarget.Z, deltaToTarget.X);
+    }
+
+    private static void RunStoppedState(ref Transform transform, ref Movement movement)
+    {
+        var target = GetTargetPosition(ref movement);
         if (!target.HasValue)
         {
             movement.State.GoToState(MoveState.Idle);
             return;
         }
 
-        // Only rotate towards target when movement is locked.
+        if (!IsInPosition(ref transform, ref movement))
+        {
+            movement.State.GoToState(MoveState.Moving);
+        }
+
+        // Look towards target position in stopped state.
         var deltaToTarget = target.Value - transform.Position;
         transform.Rotation = Vector3.UnitY * (float)Math.Atan2(-deltaToTarget.Z, deltaToTarget.X);
     }
@@ -57,9 +84,15 @@ public static class MoveCharactersSystem
     {
         if (IsInPosition(ref transform, ref movement))
         {
-            // Keep following the entity with minimal movement or go to Idle state if the target was a position.
-            if (!movement.FollowEntity.HasValue)
+            // Keep following the entity with minimal movement or go to Stopped state if in position next to target.
+            if (movement.FollowEntity.HasValue)
             {
+                movement.State.GoToState(MoveState.Stopped);
+            }
+            else
+            {
+                // Destination reached.
+                movement.TargetPosition = null;
                 movement.State.GoToState(MoveState.Idle);
             }
 

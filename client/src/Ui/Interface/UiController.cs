@@ -22,11 +22,13 @@ public partial class UiController : Node
     public override void _Ready()
     {
         Instance = this;
-        CameraController.OnEntityClick += clickedEntity =>
-        {
-            TargetedEntity = clickedEntity;
-            EmitSignalTargetUpdated(TargetedEntity);
-        };
+        CameraController.OnEntityClick += SetTarget;
+    }
+
+    public void SetTarget(NetworkedEntity? target)
+    {
+        TargetedEntity = target;
+        EmitSignalTargetUpdated(TargetedEntity);
     }
 
     public void FinishConnect()

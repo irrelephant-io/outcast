@@ -2,6 +2,7 @@ using Godot;
 using Irrelephant.Outcast.Client.Entities;
 using Irrelephant.Outcast.Client.Networking.Extensions;
 using Irrelephant.Outcast.Client.Ui.Control;
+using Irrelephant.Outcast.Client.Ui.Interface.UiState.Gameplay;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 
 namespace Irrelephant.Outcast.Client.Networking;
@@ -41,7 +42,6 @@ public partial class NetworkServiceUpdate : Node
                     response.YAxisRotation
                 );
                 spawned.SetEntityName(_networkService.Client.PlayerName);
-                GD.Print("Spawned player: " + spawned.RemoteId);
             }
             else if (message is EntityPositionUpdate position)
             {
@@ -76,6 +76,14 @@ public partial class NetworkServiceUpdate : Node
                     entity.NotifyMovementStart();
                 }
             }
+            else if (message is InitiateFollowNotice followNotice)
+            {
+                var node = GetNode($"/root/Main/World/Entities/{followNotice.EntityId:N}");
+                if (node is Entity entity)
+                {
+                    entity.NotifyMovementStart();
+                }
+            }
             else if (message is MoveDoneNotice moveDoneNotice)
             {
                 var node = GetNode($"/root/Main/World/Entities/{moveDoneNotice.EntityId:N}");
@@ -83,6 +91,23 @@ public partial class NetworkServiceUpdate : Node
                 {
                     entity.NotifyMovementEnd();
                 }
+            }
+            else if (message is InitiateWindupNotice windupNotice)
+            {
+                var node = GetNode($"/root/Main/World/Entities/{windupNotice.EntityId:N}");
+                if (node is Entity entity)
+                {
+                    entity.NotifyAttack();
+                }
+            }
+            else if (message is DamageNotice damageNotice)
+            {
+                var dealer = GetNode<PlayerEntity>($"/root/Main/World/Entities/{damageNotice.DealerId:N}");
+                var receiver = GetNode<PlayerEntity>($"/root/Main/World/Entities/{damageNotice.EntityId:N}");
+
+                SystemConsole.Instance?.AddMessage(
+                    $"{dealer.EntityName} dealt [b][color=red]{damageNotice.Damage}[/color][/b] to {receiver.EntityName}."
+                );
             }
             else if (message is SpawnEntity genericEntitySpawn)
             {

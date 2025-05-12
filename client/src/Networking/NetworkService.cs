@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
 using Godot;
+using Irrelephant.Outcast.Client.Ui.Interface;
+using Irrelephant.Outcast.Client.Ui.Interface.UiState;
 using Irrelephant.Outcast.Networking.Protocol;
 using Irrelephant.Outcast.Networking.Transport;
 
@@ -52,7 +54,7 @@ public partial class NetworkService : Node
         {
             if (evtArgs.SocketError == SocketError.ConnectionRefused)
             {
-                GD.PrintErr($"Unable to connect to server ... Actively refused.");
+                GD.PrintErr("Unable to connect to server ... Actively refused.");
                 return;
             }
 
@@ -79,6 +81,11 @@ public partial class NetworkService : Node
                 playerName
             );
             Client.Initialize();
+            Client.Closed += (_, _) =>
+            {
+                Client.Dispose();
+                UiController.Instance.UiStateController.GoToState(UiStates.Login);
+            };
             GD.Print("Socket connected...");
         }
     }

@@ -41,8 +41,8 @@ public class ArchetypeRegistry(
             new Attack
             {
                 Damage = archetype.AttackDamage,
-                AttackCooldownRemaining = archetype.AttackCooldown,
-                AttackCooldown = 0,
+                AttackCooldownRemaining = 0,
+                AttackCooldown = archetype.AttackCooldown,
                 Range = 2.0f
             }
         );

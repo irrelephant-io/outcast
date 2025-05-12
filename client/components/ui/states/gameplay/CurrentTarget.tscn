@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://bkd01jukupxy4"]
+
+[ext_resource type="Script" uid="uid://dirotsw558b2u" path="res://src/Ui/Interface/UiState/Gameplay/CurrentTarget.cs" id="1_30jvn"]
+
+[node name="CurrentTarget" type="PanelContainer"]
+custom_minimum_size = Vector2(128, 32)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_30jvn")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="DeselectButton" type="Button" parent="MarginContainer"]
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 8
+text = "X"
+
+[node name="SelectionName" type="Label" parent="MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "target"

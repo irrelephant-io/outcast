@@ -94,6 +94,7 @@ public class OutcastWorld : IDisposable
         _processNetworkMessagesSystem.Run(_world);
         ManageEntitiesInInterestSphereSystem.Run(_world);
         MoveCharactersSystem.Run(_world, 0.1f);
+        AttackSystem.Run(_world);
         PassiveThinkerSystem.Run(_world);
         UpdateNetworkCharacterStatusSystem.Run(_world);
         _updateInterestSphereSystem.RunLateUpdate(_world);

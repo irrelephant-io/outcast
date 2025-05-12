@@ -8,8 +8,13 @@ public struct StateMachine<TStateEnum>
 
     public bool DidStateChange;
 
+    private int _ticksLeft;
+
+    public bool EnterTick() => _ticksLeft-- > 0;
+
     public void GoToState(TStateEnum state)
     {
+        _ticksLeft++;
         Previous = Current;
         Current = state;
         DidStateChange = true;
@@ -17,6 +22,7 @@ public struct StateMachine<TStateEnum>
 
     public void ClearStateChange()
     {
+        _ticksLeft = 1;
         DidStateChange = false;
     }
 }

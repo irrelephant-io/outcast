@@ -57,4 +57,9 @@ public partial class Entity : Node3D
     {
         _animationPlayer?.Play("Idle");
     }
+
+    public void NotifyAttack()
+    {
+        _animationPlayer?.Play("Attack_One_H_Slash");
+    }
 }

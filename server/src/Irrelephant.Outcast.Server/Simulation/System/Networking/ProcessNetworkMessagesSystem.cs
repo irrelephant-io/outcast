@@ -30,6 +30,10 @@ public class ProcessNetworkMessagesSystem(
                     {
                         ProcessConnectRequest(ref protocolClient, ref entity, request);
                     }
+                    else if (message is InitiateAttackRequest attack)
+                    {
+                        ProcessAttackRequest(world, entity, attack);
+                    }
                 }
             }
         );
@@ -44,25 +48,38 @@ public class ProcessNetworkMessagesSystem(
     {
         if (world.Has<Movement, GlobalId>(entity))
         {
-            var movable = world.Get<Movement, GlobalId>(entity);
-            movable.t0.TargetPosition = move.MovePosition;
+            ref var movement = ref entity.TryGetRef<Movement>(out var _);
+            ref var attack = ref entity.TryGetRef<Attack>(out var hasAttack);
 
-            var moveNotice = new InitiateMoveNotice(
-                movable.t1.Id,
-                move.MovePosition
-            );
-
-            protocolClient.Network.EnqueueOutboundMessage(moveNotice);
-
-            // Notify other interested clients that the entity is moving.
-            foreach (var interestedEntity in protocolClient.InterestSphere.EntitiesWithin)
+            if (hasAttack)
             {
-                ref var client = ref interestedEntity.TryGetRef<ProtocolClient>(out var hasClient);
-                if (hasClient)
-                {
-                    client.Network.EnqueueOutboundMessage(moveNotice);
-                }
+                attack.ClearAttackCommand();
             }
+
+            movement.SetMoveToPosition(move.MovePosition);
+        }
+    }
+
+    private void ProcessAttackRequest(
+        World world,
+        Entity entity,
+        InitiateAttackRequest attack
+    )
+    {
+        if (world.Has<Attack, GlobalId>(entity))
+        {
+            var query = new QueryDescription().WithAll<GlobalId>();
+            world.Query(
+                in query,
+                (Entity targetEntity, ref GlobalId gid) =>
+                {
+                    if (gid.Id == attack.EntityId)
+                    {
+                        ref var attacker = ref entity.TryGetRef<Attack>(out _);
+                        attacker.AttackTarget = targetEntity;
+                    }
+                }
+            );
         }
     }
 

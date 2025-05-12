@@ -33,7 +33,7 @@ public class EntitySpawner(
             new Movement { TargetPosition = DefaultSpawnPosition, MoveSpeed = 5.0f },
             new EntityName { Name = name },
             new Health { MaxHealth = 100, CurrentHealth = 100 },
-            new Attack { Damage = 5, AttackCooldownRemaining = 10, AttackCooldown = 0, Range = 2.0f }
+            new Attack { Damage = 5, AttackCooldownRemaining = 0, AttackCooldown = 10, Range = 2.0f }
         );
         positionTracker.Track(entity);
     }

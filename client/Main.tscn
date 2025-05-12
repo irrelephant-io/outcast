@@ -208,7 +208,6 @@ AnglePerPercentViewportPitch = 1.5
 [node name="PlayerController" type="Node" parent="UI" node_paths=PackedStringArray("CameraController")]
 script = ExtResource("4_fos0i")
 CameraController = NodePath("../MainCamera")
-MoveSpeed = 3.0
 
 [node name="UserInterface" type="Control" parent="UI"]
 layout_mode = 3

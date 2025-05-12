@@ -1,6 +1,7 @@
 using Godot;
 using Irrelephant.Outcast.Client.Networking.Extensions;
 using Irrelephant.Outcast.Client.Ui.Camera;
+using Irrelephant.Outcast.Client.Ui.Interface;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 
 namespace Irrelephant.Outcast.Client.Ui.Control;
@@ -13,9 +14,6 @@ public partial class PlayerController : Node
 
     [Export]
     public CameraController CameraController = null!;
-
-    [Export]
-    public float MoveSpeed { get; set; }
 
     public void SetPlayerEntity(Entities.PlayerEntity playerEntity)
     {
@@ -43,5 +41,15 @@ public partial class PlayerController : Node
                 )
             );
         };
+    }
+
+    public void AttackCurrentTarget()
+    {
+        if (UiController.Instance.TargetedEntity is {} target)
+        {
+            ControlledPlayer?.OwningClient.EnqueueOutboundMessage(
+                new InitiateAttackRequest(target.RemoteId)
+            );
+        }
     }
 }

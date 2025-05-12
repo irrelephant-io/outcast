@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://c181y1kb47q4c"]
+
+[ext_resource type="Script" uid="uid://c7cmjk3cmqd1w" path="res://src/Ui/Interface/UiState/Gameplay/SystemConsole.cs" id="1_ct5ue"]
+[ext_resource type="PackedScene" uid="uid://3rk5ndxo7fd3" path="res://components/ui/states/gameplay/console/LogMessage.tscn" id="2_2mupg"]
+
+[node name="SystemConsole" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ct5ue")
+MaxLines = 30
+LogEntryTemplate = ExtResource("2_2mupg")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+clip_contents = true
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="Messages" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 2

@@ -1,4 +1,8 @@
-[gd_scene format=3 uid="uid://duj7p7ubvtn5i"]
+[gd_scene load_steps=4 format=3 uid="uid://duj7p7ubvtn5i"]
+
+[ext_resource type="PackedScene" uid="uid://bkd01jukupxy4" path="res://components/ui/states/gameplay/CurrentTarget.tscn" id="1_hnno7"]
+[ext_resource type="PackedScene" uid="uid://bstc31tqophu4" path="res://components/ui/states/gameplay/ActionPanel.tscn" id="1_quver"]
+[ext_resource type="PackedScene" uid="uid://c181y1kb47q4c" path="res://components/ui/states/gameplay/console/SystemConsole.tscn" id="3_ob5wj"]
 
 [node name="GameplayUiState" type="Control"]
 layout_mode = 3
@@ -7,3 +11,42 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="SystemConsole" parent="." instance=ExtResource("3_ob5wj")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_right = 0.0
+offset_left = 16.0
+offset_top = -196.0
+offset_right = 376.0
+offset_bottom = -16.0
+grow_horizontal = 1
+grow_vertical = 0
+
+[node name="CurrentTarget" parent="." instance=ExtResource("1_hnno7")]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = -64.0
+offset_top = 16.0
+offset_right = 64.0
+offset_bottom = 48.0
+grow_vertical = 1
+
+[node name="ActionPanel" parent="." instance=ExtResource("1_quver")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -101.0
+offset_top = -68.0
+offset_right = 101.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
