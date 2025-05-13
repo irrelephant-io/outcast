@@ -19,6 +19,8 @@ public record DamageNotification(
 
 public record HealthNotification(Guid EntityId, int PercentHealth) : Message;
 
+public record SlimDamageNotification(Guid EntityId, int Damage) : Message;
+
 public record ExactDamageNotification(
     Guid EntityId,
     int CurrentHealth,
