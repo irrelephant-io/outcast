@@ -17,7 +17,7 @@ public record DamageNotification(
     int Damage
 ) : HealthNotification(EntityId, PercentHealth);
 
-public record HealthNotification(Guid EntityId, int PercentHealth);
+public record HealthNotification(Guid EntityId, int PercentHealth) : Message;
 
 public record ExactDamageNotification(
     Guid EntityId,
@@ -27,7 +27,7 @@ public record ExactDamageNotification(
     int Damage
 ) : ExactHealthNotification(EntityId, CurrentHealth, MaximumHealth);
 
-public record ExactHealthNotification(Guid EntityId, int CurrentHealth, int MaximumHealth);
+public record ExactHealthNotification(Guid EntityId, int CurrentHealth, int MaximumHealth) : Message;
 
 public record EntityPositionNotification(
     Guid EntityId,
@@ -35,3 +35,7 @@ public record EntityPositionNotification(
     Vector3 CurrentPosition,
     float CurrentYAxisRotation
 ) : Message;
+
+public record CombatStartNotification(Guid EntityId) : Message;
+
+public record CombatEndNotification(Guid EntityId) : Message;
