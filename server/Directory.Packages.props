@@ -4,9 +4,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Arch" Version="2.0.0" />
-    <PackageVersion Include="Irrelephant.Outcast.Networking.Protocol" Version="0.0.39" />
-    <PackageVersion Include="Irrelephant.Outcast.Networking.Protocol.Abstractions" Version="0.0.39" />
-    <PackageVersion Include="Irrelephant.Outcast.Networking.Transport" Version="0.0.39" />
+    <PackageVersion Include="Irrelephant.Outcast.Networking.Protocol" Version="0.0.45" />
+    <PackageVersion Include="Irrelephant.Outcast.Networking.Protocol.Abstractions" Version="0.0.45" />
+    <PackageVersion Include="Irrelephant.Outcast.Networking.Transport" Version="0.0.45" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.5" />
     <!-- Testing Packages -->
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />

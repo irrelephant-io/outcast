@@ -50,6 +50,9 @@ jobs:
             --configuration=${{ inputs.configuration }} \
             ${{ inputs.target }}
 
+      - name: dotnet test
+        run: dotnet test --no-build  --configuration=${{ inputs.configuration }} ${{ inputs.target }}
+
       - name: dotnet pack
         run: |
           dotnet pack \

@@ -8,13 +8,7 @@ on:
       - ".github/**"
       - "networking/**"
 jobs:
-  validate:
-    uses: ./.github/workflows/validate.yaml
-    with:
-      target: "networking/Irrelephant.Outcast.Networking.sln"
-
   publish:
-    needs: validate
     uses: ./.github/workflows/nuget.publish.yaml
     with:
       target: "networking/Irrelephant.Outcast.Networking.sln"
