@@ -32,7 +32,10 @@ jobs:
             9.0.x
             8.0.x
 
-      - run: dotnet restore --locked-mode ${{ inputs.target }}
+      - name: nuget restore
+        run: dotnet restore --locked-mode ${{ inputs.target }}
+        env:
+          NuGetPackageSourceCredentials_Irrelepant: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
 
       - run: |
           dotnet build \
