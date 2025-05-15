@@ -29,8 +29,8 @@ jobs:
             9.0.x
             8.0.x
 
-      - run: dotnet nuget list source
-
+      - run: dotnet nuget add source --username=${{ github.actor }} --password=${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/irrelephant-io/index.json"
+      
       - name: dotnet build
         run: |
           dotnet build \
