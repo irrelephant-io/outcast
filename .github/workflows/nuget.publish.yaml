@@ -32,24 +32,27 @@ jobs:
             9.0.x
             8.0.x
 
-      - name: nuget restore
+      - name: dotnet restore
         run: dotnet restore --locked-mode ${{ inputs.target }}
-        env:
-          NuGetPackageSourceCredentials_Irrelepant: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
 
-      - run: |
+
+      - name: dotnet build
+        run: |
           dotnet build \
-            --no-restore \
             --configuration=${{ inputs.configuration }} \
             ${{ inputs.target }}
-
-      - run: |
+        env:
+          NuGetPackageSourceCredentials_Irrelepant: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
+      
+      - name: dotnet pack
+        run: |
           dotnet pack \
             --no-build \
             /p:Version=${{ inputs.version }} \
             ${{ inputs.target }}
 
-      - run: |
+      - name: dotnet nuget push
+        run: |
           for file in $(find . -name \*.nupkg); do
             dotnet nuget push --api-key="${{ secrets.GITHUB_TOKEN }}" $file
           done

@@ -27,11 +27,13 @@ jobs:
             9.0.x
             8.0.x
 
-      - name: nuget restore
-        run: dotnet restore --locked-mode ${{ inputs.target }}
+      - name: dotnet build
+        run: |
+          dotnet build \
+            --configuration=${{ inputs.configuration }} \
+            ${{ inputs.target }}
         env:
           NuGetPackageSourceCredentials_Irrelepant: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
 
-      - run: dotnet build --no-restore --configuration=${{ inputs.configuration }} ${{ inputs.target }}
-
-      - run: dotnet test --no-build  --configuration=${{ inputs.configuration }} ${{ inputs.target }}
+      - name: dotnet test
+        run: dotnet test --no-build  --configuration=${{ inputs.configuration }} ${{ inputs.target }}
