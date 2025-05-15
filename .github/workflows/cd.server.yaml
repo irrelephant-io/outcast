@@ -12,7 +12,7 @@ jobs:
   validate:
     uses: ./.github/workflows/validate.yaml
     with:
-      target: "server/Irrelephant.Server.Networking.sln"
+      target: "server/Irrelephant.Outcast.Server.sln"
 
   publish:
     needs: validate
