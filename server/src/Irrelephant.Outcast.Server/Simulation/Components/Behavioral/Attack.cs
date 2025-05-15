@@ -1,4 +1,5 @@
-﻿using Irrelephant.Outcast.Server.Simulation.Components.Data;
+﻿using Arch.Core;
+using Irrelephant.Outcast.Server.Simulation.Components.Data;
 
 namespace Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 
@@ -12,7 +13,7 @@ public enum AttackState
 
 public struct AttackDamageDealt
 {
-    public Guid EntityId;
+    public Entity Entity;
     public int Damage;
 }
 

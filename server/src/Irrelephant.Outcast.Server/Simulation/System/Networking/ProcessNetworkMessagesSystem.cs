@@ -22,7 +22,7 @@ public class ProcessNetworkMessagesSystem(
             {
                 while (protocolClient.Network.TryDequeueInboundMessage(out var message))
                 {
-                    if (message is InitiateMoveRequest move)
+                    if (message is MoveCommand move)
                     {
                         ProcessMoveRequest(world, ref protocolClient, ref entity, move);
                     }
@@ -30,7 +30,7 @@ public class ProcessNetworkMessagesSystem(
                     {
                         ProcessConnectRequest(ref protocolClient, ref entity, request);
                     }
-                    else if (message is InitiateAttackRequest attack)
+                    else if (message is AttackCommand attack)
                     {
                         ProcessAttackRequest(world, entity, attack);
                     }
@@ -43,7 +43,7 @@ public class ProcessNetworkMessagesSystem(
         World world,
         ref ProtocolClient protocolClient,
         ref Entity entity,
-        InitiateMoveRequest move
+        MoveCommand move
     )
     {
         if (world.Has<Movement, GlobalId>(entity))
@@ -63,7 +63,7 @@ public class ProcessNetworkMessagesSystem(
     private void ProcessAttackRequest(
         World world,
         Entity entity,
-        InitiateAttackRequest attack
+        AttackCommand attack
     )
     {
         if (world.Has<Attack, GlobalId>(entity))
@@ -98,7 +98,8 @@ public class ProcessNetworkMessagesSystem(
                 protocolClient.Network.SessionId,
                 gid.Id,
                 SpawnPosition: transform.Position,
-                YAxisRotation: transform.Rotation.Y
+                YAxisRotation: transform.Rotation.Y,
+                gid.ArchetypeId
             )
         );
     }

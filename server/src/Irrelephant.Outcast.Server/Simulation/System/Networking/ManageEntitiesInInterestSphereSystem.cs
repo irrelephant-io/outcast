@@ -22,22 +22,36 @@ public static class ManageEntitiesInInterestSphereSystem
                     if (entering.Has<Transform, GlobalId>())
                     {
                         var baseComponents = entering.Get<Transform, GlobalId>();
-                        ref var namedEntity = ref entering.TryGetRef<EntityName>(out var isNamed);
+                        ref var namedEntity = ref entering.TryGetRef<EntityName>(out _);
 
-                        var message = isNamed
+                        var message = baseComponents.t1.IsPlayer
                             ? new SpawnPlayerEntity(
                                 baseComponents.t1.Id,
                                 baseComponents.t0.Position,
                                 baseComponents.t0.Rotation.Y,
+                                baseComponents.t1.ArchetypeId,
                                 namedEntity.Name
                             )
                             : new SpawnEntity(
                                 baseComponents.t1.Id,
                                 baseComponents.t0.Position,
-                                baseComponents.t0.Rotation.Y
+                                baseComponents.t0.Rotation.Y,
+                                baseComponents.t1.ArchetypeId
                             );
 
                         protocolClient.Network.EnqueueOutboundMessage(message);
+
+                        ref var health = ref entering.TryGetRef<Health>(out var hasHealth);
+                        var isPlayer = entering.Has<ProtocolClient>();
+                        if (hasHealth && !isPlayer)
+                        {
+                            protocolClient.Network.EnqueueOutboundMessage(
+                                new HealthNotification(
+                                    baseComponents.t1.Id,
+                                    health.PercentHealth
+                                )
+                            );
+                        }
                     }
                 }
 

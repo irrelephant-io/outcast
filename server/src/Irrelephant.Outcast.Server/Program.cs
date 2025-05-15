@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using Irrelephant.Outcast.Networking.Protocol;
 using Irrelephant.Outcast.Server.Configuration;
+using Irrelephant.Outcast.Server.Data.Storage;
 using Irrelephant.Outcast.Server.Hosting;
 using Irrelephant.Outcast.Server.Networking;
 using Irrelephant.Outcast.Server.Simulation;
-using Irrelephant.Outcast.Server.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -22,7 +22,7 @@ var options = Options.Create(new ServerNetworkingOptions
 hostLogger.LogInformation("Initialising world...");
 var world = new OutcastWorld(
     factory.CreateLogger<OutcastWorld>(),
-    new StorageReader(factory.CreateLogger<StorageReader>())
+    new StorageReader()
 );
 
 hostLogger.LogInformation("Starting server...");

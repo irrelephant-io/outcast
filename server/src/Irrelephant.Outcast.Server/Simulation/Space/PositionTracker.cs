@@ -8,7 +8,7 @@ namespace Irrelephant.Outcast.Server.Simulation.Space;
 
 public interface IPositionTracker
 {
-    Entity[] QueryWithin(Vector3 position, float distance);
+    HashSet<Entity> QueryWithin(Vector3 position, float distance);
 
     void Track(Entity entity);
 
@@ -19,13 +19,13 @@ public class NaivePositionTracker : IPositionTracker
 {
     public IList<Entity> _allKnownEntities = new List<Entity>();
 
-    public Entity[] QueryWithin(Vector3 position, float distance) =>
+    public HashSet<Entity> QueryWithin(Vector3 position, float distance) =>
         _allKnownEntities
             .Where(it => {
                 ref var transform = ref it.Get<Transform>();
                 return (transform.Position - position).LengthSquared() < distance * distance;
             })
-            .ToArray();
+            .ToHashSet();
 
     public void Track(Entity entity)
     {

@@ -1,20 +1,20 @@
 ﻿using System.Numerics;
 using Arch.Core;
-using Arch.Core.Extensions;
-using Irrelephant.Outcast.Server.Data.Contract;
-using Irrelephant.Outcast.Server.Simulation.Components;
+using Irrelephant.Outcast.Server.Data.Storage;
 using Irrelephant.Outcast.Server.Simulation.Components.Ai;
 using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 using Irrelephant.Outcast.Server.Simulation.Components.Data;
 using Microsoft.Extensions.Logging;
+using EntityArchetype = Irrelephant.Outcast.Server.Data.Contract.EntityArchetype;
 
-namespace Irrelephant.Outcast.Server.Storage;
+namespace Irrelephant.Outcast.Server.Simulation.System.EntityLifecycle;
 
 public class ArchetypeRegistry(
     ILogger logger,
     StorageReader storageReader
 )
 {
+    public static Guid PlayerArchetypeId = new("00000000-0000-0000-0001-0f11d2247838");
     private readonly Dictionary<Guid, EntityArchetype> _archetypes = new();
 
     public async Task LoadAsync()
@@ -52,7 +52,8 @@ public class ArchetypeRegistry(
             AnchorPosition = anchorPosition,
             ThinkingCooldown = 100,
             ThinkingCooldownVariance = 10,
-            RoamDistance = 15
+            RoamDistance = 15,
+            PursuitDistance = 30
         };
 
         if (archetype.IsAggressive)

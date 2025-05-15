@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{953F1F62-D74
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8689B88D-7CBA-4DE1-91D0-DC432A75D029}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Outcast.Server.Data", "Irrelephant.Outcast.Server.Data\Irrelephant.Outcast.Server.Data.csproj", "{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Outcast.Server.Data", "src\Irrelephant.Outcast.Server.Data\Irrelephant.Outcast.Server.Data.csproj", "{0FF08C12-55E8-4975-9DC0-0352FA3AD6F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

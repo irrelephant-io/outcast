@@ -1,5 +1,6 @@
 ﻿using Arch.Buffer;
 using Arch.Core;
+using Irrelephant.Outcast.Server.Data.Storage;
 using Irrelephant.Outcast.Server.Simulation.Components;
 using Irrelephant.Outcast.Server.Simulation.Components.Communication;
 using Irrelephant.Outcast.Server.Simulation.Space;
@@ -7,7 +8,6 @@ using Irrelephant.Outcast.Server.Simulation.System;
 using Irrelephant.Outcast.Server.Simulation.System.EntityLifecycle;
 using Irrelephant.Outcast.Server.Simulation.System.Networking;
 using Irrelephant.Outcast.Server.Simulation.System.Simulation;
-using Irrelephant.Outcast.Server.Storage;
 using Microsoft.Extensions.Logging;
 using Schedulers;
 
@@ -95,7 +95,7 @@ public class OutcastWorld : IDisposable
         ManageEntitiesInInterestSphereSystem.Run(_world);
         MoveCharactersSystem.Run(_world, 0.1f);
         AttackSystem.Run(_world);
-        PassiveThinkerSystem.Run(_world);
+        PassiveThinkerSystem.Run(_world, _positionTracker);
         UpdateNetworkCharacterStatusSystem.Run(_world);
         _updateInterestSphereSystem.RunLateUpdate(_world);
         DeleteEntitiesSystem.Run(_world);

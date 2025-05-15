@@ -26,7 +26,7 @@ public partial class PlayerController : Node
         if (ControlledPlayer is not null)
         {
             var client = ControlledPlayer.OwningClient;
-            client.EnqueueOutboundMessage(new DisconnectNotice(client.SessionId, "Exiting."));
+            client.EnqueueOutboundMessage(new DisconnectNotification(client.SessionId, "Exiting."));
         }
     }
 
@@ -36,7 +36,7 @@ public partial class PlayerController : Node
         CameraController.OnLeftClick += clickedLocation =>
         {
             ControlledPlayer?.OwningClient.EnqueueOutboundMessage(
-                new InitiateMoveRequest(
+                new MoveCommand(
                     clickedLocation.ToClrVector()
                 )
             );
@@ -48,7 +48,7 @@ public partial class PlayerController : Node
         if (UiController.Instance.TargetedEntity is {} target)
         {
             ControlledPlayer?.OwningClient.EnqueueOutboundMessage(
-                new InitiateAttackRequest(target.RemoteId)
+                new AttackCommand(target.RemoteId)
             );
         }
     }

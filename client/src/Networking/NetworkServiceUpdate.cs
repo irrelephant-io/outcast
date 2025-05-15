@@ -43,7 +43,7 @@ public partial class NetworkServiceUpdate : Node
                 );
                 spawned.SetEntityName(_networkService.Client.PlayerName);
             }
-            else if (message is EntityPositionUpdate position)
+            else if (message is EntityPositionNotification position)
             {
                 var node = GetNode($"/root/Main/World/Entities/{position.EntityId:N}");
                 if (node is NetworkedEntity networkedEntity)
@@ -68,7 +68,7 @@ public partial class NetworkServiceUpdate : Node
                 );
                 player.SetEntityName(playerSpawn.PlayerName);
             }
-            else if (message is InitiateMoveNotice initiateMoveNotice)
+            else if (message is MoveNotification initiateMoveNotice)
             {
                 var node = GetNode($"/root/Main/World/Entities/{initiateMoveNotice.EntityId:N}");
                 if (node is Entity entity)
@@ -76,7 +76,7 @@ public partial class NetworkServiceUpdate : Node
                     entity.NotifyMovementStart();
                 }
             }
-            else if (message is InitiateFollowNotice followNotice)
+            else if (message is FollowNotification followNotice)
             {
                 var node = GetNode($"/root/Main/World/Entities/{followNotice.EntityId:N}");
                 if (node is Entity entity)
@@ -84,7 +84,7 @@ public partial class NetworkServiceUpdate : Node
                     entity.NotifyMovementStart();
                 }
             }
-            else if (message is MoveDoneNotice moveDoneNotice)
+            else if (message is MovementStopNotification moveDoneNotice)
             {
                 var node = GetNode($"/root/Main/World/Entities/{moveDoneNotice.EntityId:N}");
                 if (node is Entity entity)
@@ -92,7 +92,7 @@ public partial class NetworkServiceUpdate : Node
                     entity.NotifyMovementEnd();
                 }
             }
-            else if (message is InitiateWindupNotice windupNotice)
+            else if (message is AttackWindupNotification windupNotice)
             {
                 var node = GetNode($"/root/Main/World/Entities/{windupNotice.EntityId:N}");
                 if (node is Entity entity)
@@ -100,13 +100,31 @@ public partial class NetworkServiceUpdate : Node
                     entity.NotifyAttack();
                 }
             }
-            else if (message is DamageNotice damageNotice)
+            else if (message is SlimDamageNotification slimDamageNotice)
             {
-                var dealer = GetNode<PlayerEntity>($"/root/Main/World/Entities/{damageNotice.DealerId:N}");
+                var receiver = GetNode<PlayerEntity>($"/root/Main/World/Entities/{slimDamageNotice.EntityId:N}");
+
+                SystemConsole.Instance?.AddMessage(
+                    $"{PlayerController.ControlledPlayer!.EntityName} dealt [b][color=red]{slimDamageNotice.Damage}[/color][/b] to {receiver.EntityName}."
+                );
+            }
+            else if (message is DamageNotification damageNotice)
+            {
                 var receiver = GetNode<PlayerEntity>($"/root/Main/World/Entities/{damageNotice.EntityId:N}");
 
                 SystemConsole.Instance?.AddMessage(
-                    $"{dealer.EntityName} dealt [b][color=red]{damageNotice.Damage}[/color][/b] to {receiver.EntityName}."
+                    $"{PlayerController.ControlledPlayer!.EntityName} dealt [b][color=red]{damageNotice.Damage}[/color][/b] to {receiver.EntityName}."
+                );
+
+                receiver.SetServerHealthData(damageNotice.PercentHealth);
+            }
+            else if (message is ExactDamageNotification exactDamageNotice)
+            {
+                var dealer = GetNode<PlayerEntity>($"/root/Main/World/Entities/{exactDamageNotice.DamageDealerId:N}");
+                var receiver = GetNode<PlayerEntity>($"/root/Main/World/Entities/{exactDamageNotice.EntityId:N}");
+
+                SystemConsole.Instance?.AddMessage(
+                    $"{dealer.EntityName} dealt [b][color=red]{exactDamageNotice.Damage}[/color][/b] to {receiver.EntityName}."
                 );
             }
             else if (message is SpawnEntity genericEntitySpawn)

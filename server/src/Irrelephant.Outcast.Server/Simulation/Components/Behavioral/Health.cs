@@ -6,4 +6,6 @@ public struct Health
     public int CurrentHealth;
 
     public bool IsAlive() => CurrentHealth > 0;
+
+    public int PercentHealth => Math.Max(0, CurrentHealth * 100 / MaxHealth);
 }

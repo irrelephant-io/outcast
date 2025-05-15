@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Arch.Core;
 using Arch.Core.Extensions;
+using Irrelephant.Outcast.Server.Simulation.Components.Ai;
 using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 using Irrelephant.Outcast.Server.Simulation.Components.Data;
 
@@ -29,7 +30,7 @@ public static class AttackSystem
                             RunWindupState(ref attack);
                             break;
                         case AttackState.Damage:
-                            RunDamageState(ref attack);
+                            RunDamageState(entity, ref attack);
                             break;
                         case AttackState.Recovery:
                             RunRecoveryState(ref entity, ref attack);
@@ -86,16 +87,22 @@ public static class AttackSystem
         }
     }
 
-    private static void RunDamageState(ref Attack attack)
+    private static void RunDamageState(Entity entity, ref Attack attack)
     {
         ref var targetHealth = ref attack.LockedInTarget!.Value.TryGetRef<Health>(out var hasHealth);
-        ref var targetGid = ref attack.LockedInTarget!.Value.TryGetRef<GlobalId>(out _);
 
         if (hasHealth)
         {
             targetHealth.CurrentHealth -= attack.Damage;
         }
-        attack.CompletedAttacks.Add(new AttackDamageDealt { EntityId = targetGid.Id, Damage = attack.Damage });
+
+        ref var targetBehavior = ref attack.LockedInTarget!.Value.TryGetRef<Behavior>(out var hasBehavior);
+        if (hasBehavior)
+        {
+            targetBehavior.ThreatTable.AddThreat(entity, attack.Damage);
+        }
+
+        attack.CompletedAttacks.Add(new AttackDamageDealt { Entity = attack.LockedInTarget!.Value, Damage = attack.Damage });
         attack.State.GoToState(AttackState.Recovery);
     }
 

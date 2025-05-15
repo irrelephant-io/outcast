@@ -13,6 +13,7 @@ public partial class NetworkedEntity : Entity
     public Vector3 LastServerPosition { get; set; }
     public float LastServerYRotation { get; set; }
     public string EntityName { get; set; } = "";
+    public int? HealthPercentage { get; set; } = null;
 
     [Export]
     public Label3D EntityLabel { get; set; } = null!;
@@ -59,5 +60,10 @@ public partial class NetworkedEntity : Entity
     {
         LastServerPosition = position;
         LastServerYRotation = yRotation;
+    }
+
+    public void SetServerHealthData(int? health)
+    {
+        HealthPercentage = health;
     }
 }

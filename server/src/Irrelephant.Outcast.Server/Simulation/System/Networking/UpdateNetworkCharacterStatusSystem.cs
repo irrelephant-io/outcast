@@ -29,7 +29,7 @@ public static class UpdateNetworkCharacterStatusSystem
 
                 if (hasAttack)
                 {
-                    SendAttackUpdate(ref pc, ref attack, ref id);
+                    SendOwnAttackUpdates(ref pc, ref attack, ref id);
                 }
 
                 foreach (var entityWithin in pc.InterestSphere.EntitiesWithin)
@@ -49,7 +49,7 @@ public static class UpdateNetworkCharacterStatusSystem
                     if (interestSphereHasAttack)
                     {
                         var gid = entityWithin.Get<GlobalId>();
-                        SendAttackUpdate(ref pc, ref interestSphereAttack, ref gid);
+                        SendAttackUpdatesFromOthers(ref entity, ref pc, ref interestSphereAttack, ref gid);
                     }
                 }
             }
@@ -65,7 +65,7 @@ public static class UpdateNetworkCharacterStatusSystem
     {
         if (movement.State.Current != MoveState.Idle || movement.State.DidStateChange)
         {
-            var moveMessage = new EntityPositionUpdate(
+            var moveMessage = new EntityPositionNotification(
                 EntityId: id.Id,
                 movement.MoveSpeed,
                 transform.Position,
@@ -80,7 +80,7 @@ public static class UpdateNetworkCharacterStatusSystem
             if (movement.TargetPosition.HasValue)
             {
                 receiver.Network.EnqueueOutboundMessage(
-                    new InitiateMoveNotice(id.Id, movement.TargetPosition.Value)
+                    new MoveNotification(id.Id, movement.TargetPosition.Value)
                 );
             }
             else if (movement.FollowEntity.HasValue)
@@ -89,7 +89,7 @@ public static class UpdateNetworkCharacterStatusSystem
                 if (gidExists)
                 {
                     receiver.Network.EnqueueOutboundMessage(
-                        new InitiateFollowNotice(id.Id, followGid.Id)
+                        new FollowNotification(id.Id, followGid.Id)
                     );
                 }
             }
@@ -100,11 +100,11 @@ public static class UpdateNetworkCharacterStatusSystem
              DidStateChange: true
         })
         {
-            receiver.Network.EnqueueOutboundMessage(new MoveDoneNotice(id.Id));
+            receiver.Network.EnqueueOutboundMessage(new MovementStopNotification(id.Id));
         }
     }
 
-    private static void SendAttackUpdate(
+    private static void SendOwnAttackUpdates(
         ref ProtocolClient receiver,
         ref Attack attack,
         ref GlobalId id
@@ -112,13 +112,60 @@ public static class UpdateNetworkCharacterStatusSystem
     {
         if (attack.State is { Current: AttackState.Windup, DidStateChange: true })
         {
-            receiver.Network.EnqueueOutboundMessage(new InitiateWindupNotice(id.Id));
+            receiver.Network.EnqueueOutboundMessage(new AttackWindupNotification(id.Id));
         }
 
         foreach (var completedAttack in attack.CompletedAttacks)
         {
+            ref var entityHealth = ref completedAttack.Entity.TryGetRef<Health>(out var hasHealth);
+            ref var targetGid = ref completedAttack.Entity.TryGetRef<GlobalId>(out _);
+
+            if (targetGid.IsPlayer || !hasHealth)
+            {
+                receiver.Network.EnqueueOutboundMessage(
+                    new SlimDamageNotification(targetGid.Id, completedAttack.Damage)
+                );
+            }
+            else
+            {
+                receiver.Network.EnqueueOutboundMessage(
+                    new DamageNotification(targetGid.Id, entityHealth.PercentHealth, id.Id, completedAttack.Damage)
+                );
+            }
+        }
+    }
+
+    private static void SendAttackUpdatesFromOthers(
+        ref Entity receiverEntity,
+        ref ProtocolClient receiver,
+        ref Attack attack,
+        ref GlobalId id
+    )
+    {
+        if (attack.State is { Current: AttackState.Windup, DidStateChange: true })
+        {
+            receiver.Network.EnqueueOutboundMessage(new AttackWindupNotification(id.Id));
+        }
+
+        foreach (var completedAttack in attack.CompletedAttacks)
+        {
+            if (receiverEntity != completedAttack.Entity)
+            {
+                // When sending updates about others' actions, only send updates concerning the receiver.
+                continue;
+            }
+
+            ref var entityHealth = ref completedAttack.Entity.TryGetRef<Health>(out _);
+            ref var targetGid = ref completedAttack.Entity.TryGetRef<GlobalId>(out _);
+
             receiver.Network.EnqueueOutboundMessage(
-                new DamageNotice(completedAttack.EntityId, id.Id, completedAttack.Damage)
+                new ExactDamageNotification(
+                    targetGid.Id,
+                    entityHealth.CurrentHealth,
+                    entityHealth.MaxHealth,
+                    id.Id,
+                    completedAttack.Damage
+                )
             );
         }
     }

@@ -8,7 +8,6 @@ using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 using Irrelephant.Outcast.Server.Simulation.Components.Communication;
 using Irrelephant.Outcast.Server.Simulation.Components.Data;
 using Irrelephant.Outcast.Server.Simulation.Space;
-using Irrelephant.Outcast.Server.Storage;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.EntityLifecycle;
 
@@ -28,7 +27,7 @@ public class EntitySpawner(
         var entityId = Guid.NewGuid();
         world.Add(
             entity,
-            new GlobalId { Id = entityId },
+            new GlobalId { Id = entityId, ArchetypeId = ArchetypeRegistry.PlayerArchetypeId },
             new Transform { Position = DefaultSpawnPosition },
             new Movement { TargetPosition = DefaultSpawnPosition, MoveSpeed = 5.0f },
             new EntityName { Name = name },
@@ -54,7 +53,7 @@ public class EntitySpawner(
                 if (exists)
                 {
                     interestedClient.Network.EnqueueOutboundMessage(
-                        new DisconnectNotice(SessionId: gid.Id, "Disconnected from server")
+                        new DisconnectNotification(SessionId: gid.Id, "Disconnected from server")
                     );
                 }
             }
@@ -72,7 +71,7 @@ public class EntitySpawner(
         var entity = world.Create();
         archetypeRegistry.SetArchetype(ref entity, entityArchetypeId, position);
         entity.Add(
-            new GlobalId { Id = Guid.NewGuid() },
+            new GlobalId { Id = Guid.NewGuid(), ArchetypeId = entityArchetypeId },
             new Transform { Position = position }
         );
         positionTracker.Track(entity);

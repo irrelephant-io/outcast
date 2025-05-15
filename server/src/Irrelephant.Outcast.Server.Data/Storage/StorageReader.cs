@@ -2,12 +2,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Irrelephant.Outcast.Server.Data.Contract;
-using Irrelephant.Outcast.Server.Simulation.Components;
-using Microsoft.Extensions.Logging;
 
-namespace Irrelephant.Outcast.Server.Storage;
+namespace Irrelephant.Outcast.Server.Data.Storage;
 
-public class StorageReader(ILogger<StorageReader> logger)
+public class StorageReader
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -19,7 +17,6 @@ public class StorageReader(ILogger<StorageReader> logger)
     {
         foreach (var entityFile in Directory.EnumerateFiles("Entities/", "*.json", SearchOption.TopDirectoryOnly))
         {
-            logger.LogDebug("Reading entity file `{EntityFileName}`.", entityFile);
             await using FileStream stream = File.OpenRead(entityFile);
             var result = await JsonSerializer.DeserializeAsync<PersistedEntity[]>(stream, _jsonSerializerOptions);
             foreach (var entity in result!)
@@ -39,7 +36,6 @@ public class StorageReader(ILogger<StorageReader> logger)
 
         foreach (var archetypeFile in allArchetypeFiles)
         {
-            logger.LogDebug("Reading entity archetype file `{EntityArchetypeFileName}`.", archetypeFile);
             await using FileStream stream = File.OpenRead(archetypeFile);
             var result = await JsonSerializer.DeserializeAsync<EntityArchetype[]>(stream, _jsonSerializerOptions);
             foreach (var archetype in result!)

@@ -1,0 +1,19 @@
+name: "CD"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yaml
+    with:
+      target: "server/Irrelephant.Server.Networking.sln"
+
+  publish:
+    needs: validate
+    uses: ./.github/workflows/nuget.publish.yaml
+    with:
+      target: "server/Irrelephant.Outcast.Server.sln"
+      version: "0.0.${{ github.run_number }}"
