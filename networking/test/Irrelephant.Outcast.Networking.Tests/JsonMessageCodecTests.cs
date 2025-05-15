@@ -17,7 +17,8 @@ public class JsonMessageCodecTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             new Vector3(100, 200, 300),
-            69f
+            69f,
+            Guid.NewGuid()
         );
 
         var tlv = _sut.Encode(message);
