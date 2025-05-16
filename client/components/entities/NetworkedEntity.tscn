@@ -3,9 +3,8 @@
 [ext_resource type="Script" uid="uid://b5ybrk5tu6d28" path="res://src/Entities/NetworkedEntity.cs" id="1_cgla6"]
 [ext_resource type="PackedScene" uid="uid://kgvue2hrd4i8" path="res://components/collision/EntityCollision.tscn" id="2_hu21u"]
 
-[node name="Entity" type="Node3D" node_paths=PackedStringArray("EntityLabel")]
+[node name="Entity" type="Node3D"]
 script = ExtResource("1_cgla6")
-EntityLabel = NodePath("EntityLabel")
 
 [node name="EntityLabel" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.84329, 0)

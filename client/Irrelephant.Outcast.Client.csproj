@@ -6,8 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Irrelephant.Outcast.Networking.Protocol" Version="0.0.47" />
-    <PackageReference Include="Irrelephant.Outcast.Networking.Transport" Version="0.0.47" />
+    <PackageReference Include="Irrelephant.Outcast.Networking.Protocol" Version="0.0.48" />
+    <PackageReference Include="Irrelephant.Outcast.Networking.Transport" Version="0.0.48" />
+    <PackageReference Include="Irrelephant.Outcast.Server.Data" Version="0.0.15" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Ui\Interface\Components\" />

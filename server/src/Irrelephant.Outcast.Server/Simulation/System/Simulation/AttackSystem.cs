@@ -50,6 +50,12 @@ public static class AttackSystem
             return;
         }
 
+        if (!attack.AttackTarget.Value.IsAlive())
+        {
+            attack.ClearAttackCommand();
+            return;
+        }
+
         ref var targetTransform = ref attack.AttackTarget.Value.TryGetRef<Transform>(out var targetExists);
         if (targetExists)
         {
@@ -89,20 +95,28 @@ public static class AttackSystem
 
     private static void RunDamageState(Entity entity, ref Attack attack)
     {
-        ref var targetHealth = ref attack.LockedInTarget!.Value.TryGetRef<Health>(out var hasHealth);
-
-        if (hasHealth)
+        if (attack.LockedInTarget!.Value.IsAlive())
         {
-            targetHealth.CurrentHealth -= attack.Damage;
+            ref var targetHealth = ref attack.LockedInTarget!.Value.TryGetRef<Health>(out var hasHealth);
+            if (hasHealth)
+            {
+                targetHealth.CurrentHealth -= attack.Damage;
+            }
+
+            ref var targetBehavior = ref attack.LockedInTarget!.Value.TryGetRef<Behavior>(out var hasBehavior);
+            if (hasBehavior)
+            {
+                targetBehavior.ThreatTable.AddThreat(entity, attack.Damage);
+            }
+
+            attack.CompletedAttacks.Add(
+                new AttackDamageDealt {
+                    Entity = attack.LockedInTarget!.Value,
+                    Damage = attack.Damage
+                }
+            );
         }
 
-        ref var targetBehavior = ref attack.LockedInTarget!.Value.TryGetRef<Behavior>(out var hasBehavior);
-        if (hasBehavior)
-        {
-            targetBehavior.ThreatTable.AddThreat(entity, attack.Damage);
-        }
-
-        attack.CompletedAttacks.Add(new AttackDamageDealt { Entity = attack.LockedInTarget!.Value, Damage = attack.Damage });
         attack.State.GoToState(AttackState.Recovery);
     }
 

@@ -4,8 +4,9 @@
 [ext_resource type="Script" uid="uid://cuy43uv2wmd38" path="res://src/Entities/NpcEntity.cs" id="2_wrqxq"]
 [ext_resource type="PackedScene" uid="uid://kgvue2hrd4i8" path="res://components/collision/EntityCollision.tscn" id="3_fld2a"]
 
-[node name="Entity" type="Node3D"]
+[node name="Entity" type="Node3D" node_paths=PackedStringArray("DisplayModel")]
 script = ExtResource("2_wrqxq")
+DisplayModel = NodePath("DisplayModel")
 
 [node name="EntityLabel" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.84329, 0)
@@ -13,5 +14,6 @@ billboard = 1
 text = "<Character Name>"
 
 [node name="DisplayModel" parent="." instance=ExtResource("2_gptpt")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
 
 [node name="CollisionBody" parent="." instance=ExtResource("3_fld2a")]

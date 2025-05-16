@@ -1,7 +1,6 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
-using Irrelephant.Outcast.Server.Simulation.Components;
 using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 using Irrelephant.Outcast.Server.Simulation.Components.Communication;
 using Irrelephant.Outcast.Server.Simulation.Components.Data;

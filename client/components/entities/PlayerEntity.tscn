@@ -4,9 +4,8 @@
 [ext_resource type="Script" uid="uid://s8f720h48ghs" path="res://src/Entities/PlayerEntity.cs" id="2_bdgpa"]
 [ext_resource type="PackedScene" uid="uid://kgvue2hrd4i8" path="res://components/collision/EntityCollision.tscn" id="2_kd518"]
 
-[node name="Entity" type="Node3D" node_paths=PackedStringArray("EntityLabel", "DisplayModel")]
+[node name="Entity" type="Node3D" node_paths=PackedStringArray("DisplayModel")]
 script = ExtResource("2_bdgpa")
-EntityLabel = NodePath("EntityLabel")
 DisplayModel = NodePath("DisplayModel")
 
 [node name="EntityLabel" type="Label3D" parent="."]

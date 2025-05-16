@@ -74,6 +74,11 @@ public static class MoveCharactersSystem
 
     private static void RunIdleState(ref Transform transform, ref Movement movement)
     {
+        if (movement.FollowEntity.HasValue && !movement.FollowEntity.Value.IsAlive())
+        {
+            movement.FollowEntity = null;
+        }
+
         if (!IsInPosition(ref transform, ref movement))
         {
             movement.State.GoToState(MoveState.Moving);
@@ -118,7 +123,7 @@ public static class MoveCharactersSystem
 
     private static Vector3? GetTargetPosition(ref Movement movement)
     {
-        if (movement.FollowEntity.HasValue)
+        if (movement.FollowEntity.HasValue && movement.FollowEntity.Value.IsAlive())
         {
             ref var targetTransform = ref movement.FollowEntity.Value.TryGetRef<Transform>(out var exists);
             if (exists)
@@ -141,7 +146,7 @@ public static class MoveCharactersSystem
         {
             return (movement.TargetPosition.Value - transform.Position).LengthSquared() < 0.001f;
         }
-        if (movement.FollowEntity.HasValue)
+        if (movement.FollowEntity.HasValue && movement.FollowEntity.Value.IsAlive())
         {
             var targetTransform = movement.FollowEntity.Value.TryGetRef<Transform>(out var targetHasTransform);
             if (targetHasTransform)

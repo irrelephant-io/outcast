@@ -14,7 +14,9 @@ public record ConnectResponse(
     Guid EntityArchetypeId
 ) : SpawnEntity(EntityId, SpawnPosition, YAxisRotation, EntityArchetypeId);
 
-public record ConnectTransferComplete(Guid SessionId);
+public record ConnectTransferComplete(
+    Guid SessionId
+);
 
 public record DisconnectNotification(
     Guid SessionId,

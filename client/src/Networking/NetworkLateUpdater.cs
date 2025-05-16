@@ -2,7 +2,7 @@ using Godot;
 
 namespace Irrelephant.Outcast.Client.Networking;
 
-public partial class NetworkLateUpdate : Node
+public partial class NetworkLateUpdater : Node
 {
     private NetworkService _networkService = null!;
 

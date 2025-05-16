@@ -77,12 +77,21 @@ public static class PassiveThinkerSystem
                 continue;
             }
 
-            if (threat.IsAlive() && entitiesInProximity.Contains(threat))
+            if (threat.IsAlive())
             {
-                foundTarget = true;
-                attack.AttackTarget = threat;
+                if (entitiesInProximity.Contains(threat))
+                {
+                    foundTarget = true;
+                    attack.AttackTarget = threat;
+                }
+            }
+            else
+            {
+                behavior.ThreatTable.DeleteThreat(threat);
             }
         }
+
+        behavior.ThreatTable.CleanupTable();
     }
 
     private static void RunRoamingState(ref Behavior behavior, ref Movement movement)

@@ -8,21 +8,25 @@ public partial class NetworkedEntity : Entity
 {
     public Guid RemoteId { get; set; }
 
-    public required Networking.Client OwningClient { get; set; }
-
     public Vector3 LastServerPosition { get; set; }
     public float LastServerYRotation { get; set; }
     public string EntityName { get; set; } = "";
     public int? HealthPercentage { get; set; } = null;
 
-    [Export]
-    public Label3D EntityLabel { get; set; } = null!;
+    private Label3D? _entityNameLabel;
+
+    [Signal]
+    public delegate void OnHealthUpdatedEventHandler(int percentage);
+
+    public override void _EnterTree()
+    {
+        _entityNameLabel = (Label3D)GetNode("EntityLabel");
+    }
 
     public static TEntity Spawn<TEntity>(
         Guid remoteId,
         Vector3 position,
-        float yRotation,
-        Networking.Client owningClient
+        float yRotation
     )
         where TEntity : NetworkedEntity
     {
@@ -32,7 +36,6 @@ public partial class NetworkedEntity : Entity
         instance.SetPosition(position);
         instance.SetRotation(Vector3.Up * yRotation);
         instance.RemoteId = remoteId;
-        instance.OwningClient = owningClient;
 
         Callable.From(() => NetworkEntityContainer.Node.AddChild(instance)).CallDeferred();
         return instance;
@@ -41,7 +44,7 @@ public partial class NetworkedEntity : Entity
     public void SetEntityName(string entityName)
     {
         EntityName = entityName;
-        EntityLabel.Text = entityName;
+        Callable.From(() => _entityNameLabel?.SetText(entityName)).CallDeferred();
     }
 
     public override void _Process(double delta)
@@ -64,6 +67,15 @@ public partial class NetworkedEntity : Entity
 
     public void SetServerHealthData(int? health)
     {
-        HealthPercentage = health;
+        if (health != HealthPercentage)
+        {
+            HealthPercentage = health;
+            EmitSignalOnHealthUpdated(HealthPercentage!.Value);
+        }
+    }
+
+    public static NetworkedEntity? GetByRemoteId(Guid remoteId)
+    {
+        return NetworkEntityContainer.Node.GetNode(remoteId.ToString("N")) as NetworkedEntity;
     }
 }

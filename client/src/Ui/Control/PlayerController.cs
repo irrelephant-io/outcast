@@ -1,4 +1,5 @@
 using Godot;
+using Irrelephant.Outcast.Client.Networking;
 using Irrelephant.Outcast.Client.Networking.Extensions;
 using Irrelephant.Outcast.Client.Ui.Camera;
 using Irrelephant.Outcast.Client.Ui.Interface;
@@ -25,7 +26,7 @@ public partial class PlayerController : Node
     {
         if (ControlledPlayer is not null)
         {
-            var client = ControlledPlayer.OwningClient;
+            var client = NetworkService.Instance.Client!;
             client.EnqueueOutboundMessage(new DisconnectNotification(client.SessionId, "Exiting."));
         }
     }
@@ -35,7 +36,7 @@ public partial class PlayerController : Node
         Instance = this;
         CameraController.OnLeftClick += clickedLocation =>
         {
-            ControlledPlayer?.OwningClient.EnqueueOutboundMessage(
+            NetworkService.Instance.Client!.EnqueueOutboundMessage(
                 new MoveCommand(
                     clickedLocation.ToClrVector()
                 )
@@ -47,7 +48,7 @@ public partial class PlayerController : Node
     {
         if (UiController.Instance.TargetedEntity is {} target)
         {
-            ControlledPlayer?.OwningClient.EnqueueOutboundMessage(
+            NetworkService.Instance.Client!.EnqueueOutboundMessage(
                 new AttackCommand(target.RemoteId)
             );
         }

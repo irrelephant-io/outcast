@@ -17,16 +17,9 @@ public class ThreatTable : IEnumerable<Entity>
 
     public void AddThreat(Entity entity, int threat)
     {
-        if (_threatList.TryGetValue(entity, out var currentThreat))
+        if (_threatList.TryGetValue(entity, out _))
         {
-            if (currentThreat + threat <= 0)
-            {
-                _threatList.Remove(entity);
-            }
-            else
-            {
-                _threatList[entity] += threat;
-            }
+            _threatList[entity] += threat;
         }
         else if (threat > 0)
         {
@@ -34,19 +27,23 @@ public class ThreatTable : IEnumerable<Entity>
         }
     }
 
+    public void DeleteThreat(Entity entity) => _threatList[entity] = 0;
+
     public void DecayThreat(Entity entity)
     {
         if (_threatList.TryGetValue(entity, out var currentThreat))
         {
             var newThreat = currentThreat - Math.Max(1, (int)(currentThreat * 0.1));
-            if (newThreat <= 0)
-            {
-                _threatList.Remove(entity);
-            }
-            else
-            {
-                _threatList[entity] = newThreat;
-            }
+            _threatList[entity] = newThreat;
+        }
+    }
+
+    public void CleanupTable()
+    {
+        var emptyKeys = _threatList.Where(it => it.Value <= 0).ToArray();
+        foreach (var keyToRemove in emptyKeys)
+        {
+            _threatList.Remove(keyToRemove.Key);
         }
     }
 }

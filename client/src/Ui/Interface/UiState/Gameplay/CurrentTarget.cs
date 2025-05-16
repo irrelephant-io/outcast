@@ -1,4 +1,3 @@
-using System;
 using Godot;
 using Irrelephant.Outcast.Client.Entities;
 
@@ -24,10 +23,20 @@ public partial class CurrentTarget : PanelContainer
     {
         UiController.Instance.TargetUpdated += target =>
         {
+            if (_currentTarget is not null)
+            {
+                _currentTarget.OnHealthUpdated -= UpdateHealthPercentage;
+            }
             _currentTarget = target;
             if (target is not null)
             {
                 _label.Text = target.EntityName;
+                target.OnHealthUpdated += UpdateHealthPercentage;
+                if (target.HealthPercentage.HasValue)
+                {
+                    UpdateHealthPercentage(target.HealthPercentage.Value);
+                }
+                _currentHealth.Visible = target.HealthPercentage.HasValue;
             }
             Visible = target is not null;
         };
@@ -37,6 +46,11 @@ public partial class CurrentTarget : PanelContainer
             UiController.Instance.SetTarget(null);
         };
         base._Ready();
+    }
+
+    private void UpdateHealthPercentage(int percentage)
+    {
+        _currentHealth.Value = percentage;
     }
 
     public override void _Process(double delta)

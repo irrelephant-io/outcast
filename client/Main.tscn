@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dnlfn1a54cboh"]
+[gd_scene load_steps=25 format=3 uid="uid://dnlfn1a54cboh"]
 
 [ext_resource type="Terrain3DTextureAsset" uid="uid://d3sskshilld2s" path="res://world/resources/ground_062_s/ground_062_s.res" id="1_03owx"]
 [ext_resource type="Terrain3DTextureAsset" uid="uid://bj2gj7perumcn" path="res://world/resources/rock_030/rock_030.res" id="2_wkp8b"]
@@ -9,10 +9,11 @@
 [ext_resource type="Script" uid="uid://cst03dxmj75jy" path="res://src/Ui/Interface/UiState/UiStateController.cs" id="7_20pc6"]
 [ext_resource type="Script" uid="uid://bbetady73ttq6" path="res://src/Networking/NetworkService.cs" id="7_lgr22"]
 [ext_resource type="PackedScene" uid="uid://xxyr1iqcvvst" path="res://components/ui/states/login/LoginUiState.tscn" id="8_5vvyt"]
-[ext_resource type="Script" uid="uid://dkjqc637riant" path="res://src/Networking/NetworkEarlyUpdate.cs" id="9_20pc6"]
 [ext_resource type="PackedScene" uid="uid://duj7p7ubvtn5i" path="res://components/ui/states/gameplay/GameplayUiState.tscn" id="9_c6i3y"]
-[ext_resource type="Script" uid="uid://b3jlajav3oxxv" path="res://src/Networking/NetworkLateUpdate.cs" id="10_5vvyt"]
-[ext_resource type="Script" uid="uid://cabu6506n20ts" path="res://src/Networking/NetworkServiceUpdate.cs" id="10_c6i3y"]
+[ext_resource type="Script" uid="uid://b28buo4nbvnsb" path="res://src/Networking/NetworkEarlyUpdater.cs" id="11_c2ibq"]
+[ext_resource type="Script" uid="uid://mswqwpehmy1i" path="res://src/Networking/NetworkServiceUpdater.cs" id="12_j4qnp"]
+[ext_resource type="Script" uid="uid://dmsqv7pfmnlq" path="res://src/Networking/NetworkLateUpdater.cs" id="13_fpfj3"]
+[ext_resource type="Script" uid="uid://dslljfyl8cwy0" path="res://src/GameData/GameDataRegistry.cs" id="14_c2ibq"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_drvgu"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -225,15 +226,17 @@ GameplayUiState = ExtResource("9_c6i3y")
 [node name="NetworkService" type="Node" parent="Global"]
 script = ExtResource("7_lgr22")
 
-[node name="NetworkEarlyUpdate" type="Node" parent="Global/NetworkService"]
+[node name="NetworkEarlyUpdater" type="Node" parent="Global/NetworkService"]
 process_priority = -100
-script = ExtResource("9_20pc6")
+script = ExtResource("11_c2ibq")
 
-[node name="NetworkServiceUpdate" type="Node" parent="Global/NetworkService" node_paths=PackedStringArray("PlayerController")]
+[node name="NetworkServiceUpdater" type="Node" parent="Global/NetworkService"]
 process_priority = -10
-script = ExtResource("10_c6i3y")
-PlayerController = NodePath("../../../UI/PlayerController")
+script = ExtResource("12_j4qnp")
 
-[node name="NetworkLateUpdate" type="Node" parent="Global/NetworkService"]
+[node name="NetworkLateUpdater" type="Node" parent="Global/NetworkService"]
 process_priority = 100
-script = ExtResource("10_5vvyt")
+script = ExtResource("13_fpfj3")
+
+[node name="GameDataRegistry" type="Node" parent="Global"]
+script = ExtResource("14_c2ibq")
