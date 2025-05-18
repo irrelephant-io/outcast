@@ -1,0 +1,43 @@
+[gd_scene load_steps=3 format=3 uid="uid://d3f850mqqrymg"]
+
+[ext_resource type="Texture2D" uid="uid://bye87j2pi72t6" path="res://components/ui/icons/solid.png" id="1_jsu0d"]
+[ext_resource type="Script" uid="uid://dkawgnqpuevp7" path="res://src/Ui/Interface/Components/Bar.cs" id="2_v4sqj"]
+
+[node name="Bar" type="Container"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_v4sqj")
+
+[node name="BarFill" type="TextureRect" parent="."]
+modulate = Color(0.454902, 0, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("1_jsu0d")
+
+[node name="BarShadow" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.27451)
+custom_minimum_size = Vector2(0, 3)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("1_jsu0d")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 12
+text = "HP"
+
+[node name="ValueText" type="Label" parent="."]
+layout_mode = 2
+size_flags_vertical = 1
+size_flags_stretch_ratio = 6.71
+theme_override_font_sizes/font_size = 12
+text = "80/100"

@@ -42,7 +42,7 @@ public class HealthNotificationHandler : IMessageHandler<HealthNotification>
     public void Process(HealthNotification message)
     {
         Callable.From(
-            () => NetworkedEntity.GetByRemoteId(message.EntityId)?.SetServerHealthData(message.RemainingHealth)
+            () => NetworkedEntity.GetByRemoteId(message.EntityId).SetServerHealthData(message.RemainingHealth)
         )
         .CallDeferred();
     }

@@ -50,7 +50,6 @@ public static class EntityHealthUpdateSystem
                         DespawnTimer = isPlayer ? -1 : 200
                     });
                     commandBuffer.Remove<Attack>(entity);
-                    commandBuffer.Remove<Health>(entity);
                     commandBuffer.Remove<Movement>(entity);
                     commandBuffer.Remove<Behavior>(entity);
                     commandBuffer.Remove<PassiveBehavior>(entity);
@@ -61,6 +60,24 @@ public static class EntityHealthUpdateSystem
         );
 
         commandBuffer.Playback(world);
+    }
 
+    public static void RunVeryLateUpdate(World world)
+    {
+        // Health component is removed from dead entities at the very end because network information
+        // about the health change needs to be flushed to the clients.
+        var query = new QueryDescription().WithAll<Health>();
+        var commandBuffer = new CommandBuffer();
+        world.Query(
+            in query,
+            (Entity entity, ref Health health) =>
+            {
+                if (!health.IsAlive())
+                {
+                    commandBuffer.Remove<Health>(entity);
+                }
+            }
+        );
+        commandBuffer.Playback(world);
     }
 }

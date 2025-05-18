@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace Irrelephant.Outcast.Client.Ui.Interface.UiState.Gameplay;
@@ -16,7 +17,6 @@ public partial class SystemConsole : PanelContainer
     private VBoxContainer _consoleContainer = null!;
 
     private ScrollContainer _consoleScrollContainer = null!;
-
 
     public override void _EnterTree()
     {
@@ -44,8 +44,19 @@ public partial class SystemConsole : PanelContainer
             firstMessage.QueueFree();
         }
 
-        Callable.From(
-            () => _consoleScrollContainer.SetVScroll((int)_consoleScrollContainer.GetVScrollBar().MaxValue)
-        ).CallDeferred();
+        // This is a workaround to a weird scrolling issue. Have to defer by 2 frames because of
+        // VScroll weirdness.
+        Callable.From(ScheduleScrollToBottomFrame1).CallDeferred();
     }
+
+    private void ScheduleScrollToBottomFrame1()
+    {
+        Callable.From(ScheduleScrollToBottomFrame2).CallDeferred();
+    }
+
+    private void ScheduleScrollToBottomFrame2()
+    {
+        _consoleScrollContainer.SetVScroll(int.MaxValue);
+    }
+
 }

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bkd01jukupxy4"]
+[gd_scene load_steps=3 format=3 uid="uid://bkd01jukupxy4"]
 
 [ext_resource type="Script" uid="uid://dirotsw558b2u" path="res://src/Ui/Interface/UiState/Gameplay/CurrentTarget.cs" id="1_30jvn"]
+[ext_resource type="PackedScene" uid="uid://d3f850mqqrymg" path="res://components/ui/components/Bar.tscn" id="2_bmaur"]
 
 [node name="CurrentTarget" type="PanelContainer"]
 custom_minimum_size = Vector2(128, 32)
@@ -32,7 +33,10 @@ size_flags_vertical = 0
 theme_override_font_sizes/font_size = 12
 text = "target"
 
-[node name="CurrentHealth" type="ProgressBar" parent="MarginContainer"]
+[node name="CurrentHealth" parent="MarginContainer" instance=ExtResource("2_bmaur")]
+visible = false
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
-size_flags_vertical = 8
-value = 30.0
+size_flags_vertical = 10
+Color = Color(0.545098, 0, 0, 1)
+ShowText = false

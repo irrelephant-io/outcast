@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using Irrelephant.Outcast.Client.GameData;
 using Irrelephant.Outcast.Client.Simulation;
 
 namespace Irrelephant.Outcast.Client.Entities;
@@ -11,12 +12,8 @@ public partial class NetworkedEntity : Entity
     public Vector3 LastServerPosition { get; set; }
     public float LastServerYRotation { get; set; }
     public string EntityName { get; set; } = "";
-    public int? CurrentHealth { get; set; } = null;
 
     private Label3D? _entityNameLabel;
-
-    [Signal]
-    public delegate void OnHealthUpdatedEventHandler(int percentage);
 
     public override void _EnterTree()
     {
@@ -26,7 +23,8 @@ public partial class NetworkedEntity : Entity
     public static TEntity Spawn<TEntity>(
         Guid remoteId,
         Vector3 position,
-        float yRotation
+        float yRotation,
+        Guid? archetypeId = null
     )
         where TEntity : NetworkedEntity
     {
@@ -36,8 +34,15 @@ public partial class NetworkedEntity : Entity
         instance.SetPosition(position);
         instance.SetRotation(Vector3.Up * yRotation);
         instance.RemoteId = remoteId;
-
         Callable.From(() => NetworkEntityContainer.Node.AddChild(instance)).CallDeferred();
+
+        if (archetypeId.HasValue)
+        {
+            var archetype = GameDataRegistry.Instance.GetArchetypeById(archetypeId.Value);
+            instance.MaxHealth = archetype!.MaxHealth;
+            instance.SetEntityName(archetype.Name);
+        }
+
         return instance;
     }
 
@@ -70,7 +75,6 @@ public partial class NetworkedEntity : Entity
         if (health != CurrentHealth)
         {
             CurrentHealth = health;
-            EmitSignalOnHealthUpdated(CurrentHealth!.Value);
         }
     }
 

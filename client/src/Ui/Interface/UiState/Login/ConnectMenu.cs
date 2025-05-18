@@ -44,6 +44,5 @@ public partial class ConnectMenu : Godot.Control
         _passwordInput.Editable = false;
         _connectButton.Disabled = false;
         NetworkService.Instance.InitiateConnectAndLogin(_userNameInput.Text);
-        UiController.Instance.FinishConnect();
     }
 }

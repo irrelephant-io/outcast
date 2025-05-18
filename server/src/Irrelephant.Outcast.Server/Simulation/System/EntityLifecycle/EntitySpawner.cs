@@ -31,7 +31,7 @@ public class EntitySpawner(
             new Transform { Position = DefaultSpawnPosition },
             new Movement { TargetPosition = DefaultSpawnPosition, MoveSpeed = 5.0f },
             new EntityName { Name = name },
-            new Health { MaxHealth = 100, CurrentHealth = 100 },
+            new Health { MaxHealth = 100, CurrentHealth = 100, RegenerationCooldown = 20, HealthRecoveryPerRegenerationTick = 1 },
             new Attack { Damage = 5, AttackCooldownRemaining = 0, AttackCooldown = 10, Range = 2.0f },
             new State()
         );

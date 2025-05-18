@@ -1,0 +1,43 @@
+[gd_scene load_steps=3 format=3 uid="uid://m3fggxt3ak7w"]
+
+[ext_resource type="Script" uid="uid://k88wh3hdmh02" path="res://src/Ui/Interface/UiState/Gameplay/CharacterPanel.cs" id="1_7eq6g"]
+[ext_resource type="PackedScene" uid="uid://d3f850mqqrymg" path="res://components/ui/components/Bar.tscn" id="1_pd1ml"]
+
+[node name="CharacterPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(200, 70)
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 215.0
+offset_bottom = 85.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_7eq6g")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+clip_contents = true
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="StatsContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="CharacterNameLabel" type="Label" parent="MarginContainer/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "<Character Name>"
+
+[node name="HP" parent="MarginContainer/StatsContainer" instance=ExtResource("1_pd1ml")]
+layout_mode = 2
+Color = Color(0.545098, 0, 0, 1)
+Label = "HP"
+
+[node name="VP" parent="MarginContainer/StatsContainer" instance=ExtResource("1_pd1ml")]
+layout_mode = 2
+Color = Color(0, 0.407843, 0, 1)
+Label = "VP"
+CurrentValue = 40.0

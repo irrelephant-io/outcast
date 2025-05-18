@@ -105,6 +105,7 @@ public class OutcastWorld : IDisposable
         EntityStateUpdateSystem.Run(_world);
         UpdateNetworkCharacterStatusSystem.Run(_world);
         _updateInterestSphereSystem.RunLateUpdate(_world);
+        EntityHealthUpdateSystem.RunVeryLateUpdate(_world);
         DeleteEntitiesSystem.Run(_world);
     }
 

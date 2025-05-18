@@ -24,7 +24,7 @@ public class ProcessNetworkMessagesSystem(
                 {
                     if (message is MoveCommand move)
                     {
-                        ProcessMoveRequest(world, ref protocolClient, ref entity, move);
+                        ProcessMoveRequest(world, ref entity, move);
                     }
                     else if (message is ConnectRequest request)
                     {
@@ -41,14 +41,13 @@ public class ProcessNetworkMessagesSystem(
 
     private static void ProcessMoveRequest(
         World world,
-        ref ProtocolClient protocolClient,
         ref Entity entity,
         MoveCommand move
     )
     {
         if (world.Has<Movement, GlobalId>(entity))
         {
-            ref var movement = ref entity.TryGetRef<Movement>(out var _);
+            ref var movement = ref entity.TryGetRef<Movement>(out _);
             ref var attack = ref entity.TryGetRef<Attack>(out var hasAttack);
 
             if (hasAttack)
@@ -109,6 +108,9 @@ public class ProcessNetworkMessagesSystem(
         );
 
         var health = entity.Get<Health>();
+        protocolClient.Network.EnqueueOutboundMessage(
+            new HealthNotification(gid.Id, health.CurrentHealth)
+        );
         protocolClient.Network.EnqueueOutboundMessage(
             new MaxHealthNotification(gid.Id, health.MaxHealth)
         );

@@ -13,13 +13,22 @@ public class SpawnPlayerEntityHandler : IMessageHandler<SpawnPlayerEntity>
         var player = NetworkedEntity.Spawn<PlayerEntity>(
             message.EntityId,
             message.SpawnPosition.ToGodotVector(),
-            message.YAxisRotation
+            message.YAxisRotation,
+            archetypeId: null
         );
         player.SetServerPositionalData(
             message.SpawnPosition.ToGodotVector(),
             message.YAxisRotation
         );
         player.SetEntityName(message.PlayerName);
+    }
+}
+
+public class ConnectTransferCompleteHandler : IMessageHandler<ConnectTransferComplete>
+{
+    public void Process(ConnectTransferComplete message)
+    {
+        UiController.Instance.FinishConnect();
     }
 }
 
@@ -30,13 +39,13 @@ public class SpawnEntityHandler : IMessageHandler<SpawnEntity>
         var entity = NetworkedEntity.Spawn<NpcEntity>(
             message.EntityId,
             message.SpawnPosition.ToGodotVector(),
-            message.YAxisRotation
+            message.YAxisRotation,
+            message.EntityArchetypeId
         );
         entity.SetServerPositionalData(
             message.SpawnPosition.ToGodotVector(),
             message.YAxisRotation
         );
-        entity.SetEntityName("Some Random Mob");
     }
 }
 

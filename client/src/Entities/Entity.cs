@@ -8,7 +8,42 @@ public partial class Entity : Node3D
 {
     private AnimationPlayer? _animationPlayer;
 
+    private int? _currentHealth;
+
+    public int? CurrentHealth
+    {
+        get => _currentHealth;
+        protected set
+        {
+            _currentHealth = value;
+            if (value.HasValue)
+            {
+                EmitSignalOnCurrentHealthUpdated(value.Value);
+            }
+        }
+    }
+
+    private int? _maxHealth;
+    public int? MaxHealth
+    {
+        get => _maxHealth;
+        set
+        {
+            _maxHealth = value;
+            if (value.HasValue)
+            {
+                EmitSignalOnMaxHealthUpdated(value.Value);
+            }
+        }
+    }
+
     public bool IsInCombat { get; private set; } = false;
+
+    [Signal]
+    public delegate void OnCurrentHealthUpdatedEventHandler(int currentHealth);
+
+    [Signal]
+    public delegate void OnMaxHealthUpdatedEventHandler(int maxHealth);
 
     [Export]
     public Node3D? DisplayModel { get; set; }

@@ -101,7 +101,7 @@ public static class AttackSystem
             ref var targetHealth = ref attack.LockedInTarget!.Value.TryGetRef<Health>(out var hasHealth);
             if (hasHealth)
             {
-                targetHealth.CurrentHealth -= attack.Damage;
+                targetHealth.AddHealth(-attack.Damage);
                 if (!targetHealth.IsAlive())
                 {
                     attack.ClearAttackCommand();
