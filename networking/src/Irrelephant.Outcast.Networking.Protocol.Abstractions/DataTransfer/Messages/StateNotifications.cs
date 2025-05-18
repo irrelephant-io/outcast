@@ -10,26 +10,9 @@ public record MovementStopNotification(Guid EntityId) : Message;
 
 public record AttackWindupNotification(Guid EntityId) : Message;
 
-public record DamageNotification(
-    Guid EntityId,
-    int PercentHealth,
-    Guid DamageDealerId,
-    int Damage
-) : HealthNotification(EntityId, PercentHealth);
+public record HealthNotification(Guid EntityId, int RemainingHealth) : Message;
 
-public record HealthNotification(Guid EntityId, int PercentHealth) : Message;
-
-public record SlimDamageNotification(Guid EntityId, int Damage) : Message;
-
-public record ExactDamageNotification(
-    Guid EntityId,
-    int CurrentHealth,
-    int MaximumHealth,
-    Guid DamageDealerId,
-    int Damage
-) : ExactHealthNotification(EntityId, CurrentHealth, MaximumHealth);
-
-public record ExactHealthNotification(Guid EntityId, int CurrentHealth, int MaximumHealth) : Message;
+public record DamageNotification(Guid EntityId, int Damage) : Message;
 
 public record EntityPositionNotification(
     Guid EntityId,
