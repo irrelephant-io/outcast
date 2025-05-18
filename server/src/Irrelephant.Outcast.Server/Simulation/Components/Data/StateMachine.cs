@@ -1,6 +1,6 @@
 ﻿namespace Irrelephant.Outcast.Server.Simulation.Components.Data;
 
-public struct StateMachine<TStateEnum>
+public struct StateMachine<TStateEnum> where TStateEnum : Enum
 {
     public TStateEnum Current;
 
@@ -17,7 +17,7 @@ public struct StateMachine<TStateEnum>
         _ticksLeft++;
         Previous = Current;
         Current = state;
-        DidStateChange = true;
+        DidStateChange = DidStateChange || !Previous.Equals(state);
     }
 
     public void ClearStateChange()

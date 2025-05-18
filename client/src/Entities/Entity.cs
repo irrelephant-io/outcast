@@ -8,6 +8,8 @@ public partial class Entity : Node3D
 {
     private AnimationPlayer? _animationPlayer;
 
+    public bool IsInCombat { get; private set; } = false;
+
     [Export]
     public Node3D? DisplayModel { get; set; }
 
@@ -50,16 +52,69 @@ public partial class Entity : Node3D
 
     public void NotifyMovementStart()
     {
-        _animationPlayer?.Play("Run");
+        if (IsInCombat)
+        {
+            _animationPlayer?.Play("Run_Combat");
+        }
+        else
+        {
+            _animationPlayer?.Play("Run");
+        }
     }
 
     public void NotifyMovementEnd()
     {
-        _animationPlayer?.Play("Idle");
+        if (IsInCombat)
+        {
+            _animationPlayer?.Play("Idle_Combat");
+        }
+        else
+        {
+            _animationPlayer?.Play("Idle");
+        }
     }
 
     public void NotifyAttack()
     {
         _animationPlayer?.Play("Attack_One_H_Slash");
+    }
+
+    public void NotifyDeath()
+    {
+        _animationPlayer?.Play("Death");
+    }
+
+    public void NotifyDead()
+    {
+        _animationPlayer?.Play("Death");
+        _animationPlayer?.Seek(_animationPlayer.CurrentAnimationLength);
+    }
+
+    public void NotifyEnterCombat()
+    {
+        var current = _animationPlayer?.CurrentAnimation;
+        if (current is "Idle")
+        {
+            _animationPlayer?.Play("Idle_Combat");
+        }
+        else if (current is "Run")
+        {
+            _animationPlayer?.Play("Run_Combat");
+        }
+        IsInCombat = true;
+    }
+
+    public void NotifyLeaveCombat()
+    {
+        var current = _animationPlayer?.CurrentAnimation;
+        if (current is "Idle_Combat")
+        {
+            _animationPlayer?.Play("Idle");
+        }
+        else if (current is "Run_Combat")
+        {
+            _animationPlayer?.Play("Run");
+        }
+        IsInCombat = false;
     }
 }

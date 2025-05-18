@@ -22,15 +22,6 @@ public partial class PlayerController : Node
         CameraController.Anchor = playerEntity;
     }
 
-    public override void _ExitTree()
-    {
-        if (ControlledPlayer is not null)
-        {
-            var client = NetworkService.Instance.Client!;
-            client.EnqueueOutboundMessage(new DisconnectNotification(client.SessionId, "Exiting."));
-        }
-    }
-
     public override void _Ready()
     {
         Instance = this;

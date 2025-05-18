@@ -11,7 +11,7 @@ public partial class NetworkedEntity : Entity
     public Vector3 LastServerPosition { get; set; }
     public float LastServerYRotation { get; set; }
     public string EntityName { get; set; } = "";
-    public int? HealthPercentage { get; set; } = null;
+    public int? CurrentHealth { get; set; } = null;
 
     private Label3D? _entityNameLabel;
 
@@ -67,15 +67,15 @@ public partial class NetworkedEntity : Entity
 
     public void SetServerHealthData(int? health)
     {
-        if (health != HealthPercentage)
+        if (health != CurrentHealth)
         {
-            HealthPercentage = health;
-            EmitSignalOnHealthUpdated(HealthPercentage!.Value);
+            CurrentHealth = health;
+            EmitSignalOnHealthUpdated(CurrentHealth!.Value);
         }
     }
 
-    public static NetworkedEntity? GetByRemoteId(Guid remoteId)
+    public static NetworkedEntity GetByRemoteId(Guid remoteId)
     {
-        return NetworkEntityContainer.Node.GetNode(remoteId.ToString("N")) as NetworkedEntity;
+        return NetworkEntityContainer.Node.GetNode<NetworkedEntity>(remoteId.ToString("N"));
     }
 }

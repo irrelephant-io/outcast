@@ -68,10 +68,10 @@ public class ProcessNetworkMessagesSystem(
     {
         if (world.Has<Attack, GlobalId>(entity))
         {
-            var query = new QueryDescription().WithAll<GlobalId>();
+            var query = new QueryDescription().WithAll<GlobalId>().WithNone<Corpse>();
             world.Query(
                 in query,
-                (Entity targetEntity, ref GlobalId gid) =>
+                (Entity targetEntity, ref GlobalId gid, ref State state) =>
                 {
                     if (gid.Id == attack.EntityId)
                     {

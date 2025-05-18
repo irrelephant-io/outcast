@@ -51,6 +51,31 @@ public static class ManageEntitiesInInterestSphereSystem
                                 )
                             );
                         }
+
+                        ref var movement = ref entering.TryGetRef<Movement>(out var hasMovement);
+                        if (hasMovement && movement.State.Current == MoveState.Moving)
+                        {
+                            protocolClient.Network.EnqueueOutboundMessage(
+                                new IsMovingNotification(baseComponents.t1.Id)
+                            );
+                        }
+
+                        ref var state = ref entering.TryGetRef<State>(out var hasState);
+                        if (hasState)
+                        {
+                            if (state.EntityState.Current == EntityState.Combat)
+                            {
+                                protocolClient.Network.EnqueueOutboundMessage(
+                                    new IsInCombatNotification(baseComponents.t1.Id)
+                                );
+                            }
+                            else if (state.EntityState.Current == EntityState.Dead)
+                            {
+                                protocolClient.Network.EnqueueOutboundMessage(
+                                    new IsDeadNotification(baseComponents.t1.Id)
+                                );
+                            }
+                        }
                     }
                 }
 

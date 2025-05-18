@@ -44,5 +44,3 @@ public struct Attack()
         CompletedAttacks.Clear();
     }
 }
-
-public struct DespawnMarker : IComponent;

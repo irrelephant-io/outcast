@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-using Arch.Core;
-using Irrelephant.Outcast.Server.Simulation.Components;
+﻿using Arch.Core;
 using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 using Irrelephant.Outcast.Server.Simulation.Components.Communication;
 using Irrelephant.Outcast.Server.Simulation.Components.Data;

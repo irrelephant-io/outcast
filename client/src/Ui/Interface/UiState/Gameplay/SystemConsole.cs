@@ -15,10 +15,14 @@ public partial class SystemConsole : PanelContainer
 
     private VBoxContainer _consoleContainer = null!;
 
+    private ScrollContainer _consoleScrollContainer = null!;
+
+
     public override void _EnterTree()
     {
         Instance = this;
-        _consoleContainer = GetNode<VBoxContainer>("MarginContainer/Messages");
+        _consoleContainer = GetNode<VBoxContainer>("MarginContainer/ScrollContainer/Messages");
+        _consoleScrollContainer = GetNode<ScrollContainer>("MarginContainer/ScrollContainer");
         AddMessage("Welcome to Outcast Online!");
     }
 
@@ -39,5 +43,9 @@ public partial class SystemConsole : PanelContainer
             _consoleContainer.RemoveChild(firstMessage);
             firstMessage.QueueFree();
         }
+
+        Callable.From(
+            () => _consoleScrollContainer.SetVScroll((int)_consoleScrollContainer.GetVScrollBar().MaxValue)
+        ).CallDeferred();
     }
 }

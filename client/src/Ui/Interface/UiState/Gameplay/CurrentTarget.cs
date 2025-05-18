@@ -32,11 +32,11 @@ public partial class CurrentTarget : PanelContainer
             {
                 _label.Text = target.EntityName;
                 target.OnHealthUpdated += UpdateHealthPercentage;
-                if (target.HealthPercentage.HasValue)
+                if (target.CurrentHealth.HasValue)
                 {
-                    UpdateHealthPercentage(target.HealthPercentage.Value);
+                    UpdateHealthPercentage(target.CurrentHealth.Value);
                 }
-                _currentHealth.Visible = target.HealthPercentage.HasValue;
+                _currentHealth.Visible = target.CurrentHealth.HasValue;
             }
             Visible = target is not null;
         };
@@ -55,9 +55,9 @@ public partial class CurrentTarget : PanelContainer
 
     public override void _Process(double delta)
     {
-        if (_currentTarget?.HealthPercentage.HasValue ?? false)
+        if (_currentTarget?.CurrentHealth.HasValue ?? false)
         {
-            _currentHealth.Value = _currentTarget.HealthPercentage.Value;
+            _currentHealth.Value = _currentTarget.CurrentHealth.Value;
         }
         else
         {

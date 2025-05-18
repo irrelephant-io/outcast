@@ -21,47 +21,19 @@ public class EntityPositionNotificationHandler : IMessageHandler<EntityPositionN
     }
 }
 
-public class SlimDamageNotificationHandler : IMessageHandler<SlimDamageNotification>
-{
-    public void Process(SlimDamageNotification message)
-    {
-        // Slim damage notification may only come in response to PvP combat and
-        // must be initiated by the current player.
-        var dealer = PlayerController.Instance.ControlledPlayer!.EntityName;
-        var receiver = NetworkedEntity.GetByRemoteId(message.EntityId)?.EntityName ?? "<unknown>";
-        SystemConsole.Instance?.AddMessage(
-            $"{dealer} dealt [b][color=red]{message.Damage}[/color][/b] to {receiver}."
-        );
-    }
-}
-
 public class DamageNotificationHandler : IMessageHandler<DamageNotification>
 {
     public void Process(DamageNotification message)
     {
-        var dealer = PlayerController.Instance.ControlledPlayer!.EntityName;
-        var receiverEntity = NetworkedEntity.GetByRemoteId(message.EntityId);
-        var receiver = receiverEntity?.EntityName ?? "<unknown>";
+        var currentPlayer = PlayerController.Instance.ControlledPlayer;
+        var dealer = NetworkedEntity.GetByRemoteId(message.DealerId);
+        var dealerName = dealer == currentPlayer ? "You" : dealer.EntityName;
+
+        var receiver = NetworkedEntity.GetByRemoteId(message.TargetId);
+        var receiverName = receiver == currentPlayer ? "you" : receiver.EntityName;
         SystemConsole.Instance?.AddMessage(
-            $"{dealer} dealt [b][color=red]{message.Damage}[/color][/b] to {receiver}."
+            $"{dealerName} dealt [b][color=red]{message.Damage}[/color][/b] damage to {receiverName}."
         );
-        receiverEntity?.SetServerHealthData(message.PercentHealth);
-    }
-}
-
-public class ExactDamageNotificationHandler : IMessageHandler<ExactDamageNotification>
-{
-    public void Process(ExactDamageNotification message)
-    {
-        var dealer = NetworkedEntity.GetByRemoteId(message.DamageDealerId)?.EntityName ?? "<unknown>";
-        var receiverEntity = NetworkedEntity.GetByRemoteId(message.EntityId);
-        var receiver = receiverEntity?.EntityName ?? "<unknown>";
-
-        SystemConsole.Instance?.AddMessage(
-            $"{dealer} dealt [b][color=red]{message.Damage}[/color][/b] to {receiver}."
-        );
-
-        receiverEntity?.SetServerHealthData(message.CurrentHealth / message.MaximumHealth);
     }
 }
 
@@ -70,8 +42,56 @@ public class HealthNotificationHandler : IMessageHandler<HealthNotification>
     public void Process(HealthNotification message)
     {
         Callable.From(
-            () => NetworkedEntity.GetByRemoteId(message.EntityId)?.SetServerHealthData(message.PercentHealth)
+            () => NetworkedEntity.GetByRemoteId(message.EntityId)?.SetServerHealthData(message.RemainingHealth)
         )
         .CallDeferred();
+    }
+}
+
+public class CombatStartNotificationHandler : IMessageHandler<CombatStartNotification>
+{
+    public void Process(CombatStartNotification message)
+    {
+        if (message.EntityId == PlayerController.Instance.ControlledPlayer?.RemoteId)
+        {
+            SystemConsole.Instance?.AddMessage(
+                "[color=yellow]You are now in combat![/color]"
+            );
+        }
+
+        NetworkedEntity.GetByRemoteId(message.EntityId)!.NotifyEnterCombat();
+    }
+}
+
+public class CombatEndNotificationHandler : IMessageHandler<CombatEndNotification>
+{
+    public void Process(CombatEndNotification message)
+    {
+        if (message.EntityId == PlayerController.Instance.ControlledPlayer?.RemoteId)
+        {
+            SystemConsole.Instance?.AddMessage(
+                "[color=yellow]You are no longer in combat![/color]"
+            );
+        }
+
+        NetworkedEntity.GetByRemoteId(message.EntityId)!.NotifyLeaveCombat();
+    }
+}
+
+public class EntityDeathNotificationHandler : IMessageHandler<EntityDeathNotification>
+{
+    public void Process(EntityDeathNotification message)
+    {
+        var dyingEntity = NetworkedEntity.GetByRemoteId(message.EntityId);
+        if (message.EntityId == PlayerController.Instance.ControlledPlayer?.RemoteId)
+        {
+            SystemConsole.Instance?.AddMessage("[color=red]Oh dear... You are dead![/color]");
+        }
+        else
+        {
+            var dyingEntityName = dyingEntity.EntityName;
+            SystemConsole.Instance?.AddMessage($"[color=yellow]{dyingEntityName} dies![/color]");
+        }
+        dyingEntity.NotifyDeath();
     }
 }

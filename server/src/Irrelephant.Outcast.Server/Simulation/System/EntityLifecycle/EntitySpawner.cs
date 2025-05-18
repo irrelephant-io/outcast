@@ -32,7 +32,8 @@ public class EntitySpawner(
             new Movement { TargetPosition = DefaultSpawnPosition, MoveSpeed = 5.0f },
             new EntityName { Name = name },
             new Health { MaxHealth = 100, CurrentHealth = 100 },
-            new Attack { Damage = 5, AttackCooldownRemaining = 0, AttackCooldown = 10, Range = 2.0f }
+            new Attack { Damage = 5, AttackCooldownRemaining = 0, AttackCooldown = 10, Range = 2.0f },
+            new State()
         );
         positionTracker.Track(entity);
     }
@@ -72,7 +73,8 @@ public class EntitySpawner(
         archetypeRegistry.SetArchetype(ref entity, entityArchetypeId, position);
         entity.Add(
             new GlobalId { Id = Guid.NewGuid(), ArchetypeId = entityArchetypeId },
-            new Transform { Position = position }
+            new Transform { Position = position },
+            new State()
         );
         positionTracker.Track(entity);
     }

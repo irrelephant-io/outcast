@@ -11,10 +11,10 @@ public static class AttackSystem
 {
     public static void Run(World world)
     {
-        var allAttackersQuery = new QueryDescription().WithAll<Attack, Transform>();
+        var allAttackersQuery = new QueryDescription().WithAll<Attack, State, Transform>();
         world.Query(
             in allAttackersQuery,
-            static (Entity entity, ref Attack attack, ref Transform transform) =>
+            static (Entity entity, ref Attack attack, ref State state, ref Transform transform) =>
             {
                 attack.ClearCompletedAttacks();
                 attack.State.ClearStateChange();
@@ -24,7 +24,7 @@ public static class AttackSystem
                     switch (attack.State.Current)
                     {
                         case AttackState.Ready:
-                            RunReadyState(ref entity, ref attack, ref transform);
+                            RunReadyState(ref entity, ref attack, ref state, ref transform);
                             break;
                         case AttackState.Windup:
                             RunWindupState(ref attack);
@@ -43,7 +43,7 @@ public static class AttackSystem
         );
     }
 
-    private static void RunReadyState(ref Entity attacker, ref Attack attack, ref Transform transform)
+    private static void RunReadyState(ref Entity attacker, ref Attack attack, ref State state, ref Transform transform)
     {
         if (!attack.AttackTarget.HasValue)
         {
@@ -68,6 +68,7 @@ public static class AttackSystem
                 attack.State.GoToState(AttackState.Windup);
                 attack.AttackCooldownRemaining = attack.AttackCooldown;
                 attack.LockedInTarget = attack.AttackTarget;
+                state.EnterCombat();
                 if (isMovable)
                 {
                     attackerMovable.LockMovement();
@@ -101,12 +102,22 @@ public static class AttackSystem
             if (hasHealth)
             {
                 targetHealth.CurrentHealth -= attack.Damage;
+                if (!targetHealth.IsAlive())
+                {
+                    attack.ClearAttackCommand();
+                }
             }
 
             ref var targetBehavior = ref attack.LockedInTarget!.Value.TryGetRef<Behavior>(out var hasBehavior);
             if (hasBehavior)
             {
                 targetBehavior.ThreatTable.AddThreat(entity, attack.Damage);
+            }
+
+            ref var targetState = ref attack.LockedInTarget!.Value.TryGetRef<State>(out var hasState);
+            if (hasState)
+            {
+                targetState.EnterCombat();
             }
 
             attack.CompletedAttacks.Add(

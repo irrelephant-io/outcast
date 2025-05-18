@@ -28,4 +28,7 @@ public class EntityArchetype
 
     [DataMember(Name = "name", IsRequired = true)]
     public required string Name { get; set; }
+
+    [DataMember(Name = "respawnTime", IsRequired = true)]
+    public required int RespawnTime { get; set; }
 }

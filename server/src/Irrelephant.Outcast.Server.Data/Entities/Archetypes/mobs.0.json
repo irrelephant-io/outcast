@@ -6,7 +6,8 @@
     "level": 1,
     "attackDamage": 2,
     "attackCooldown": 15,
-    "name": "Passive Mob"
+    "name": "Passive Mob",
+    "respawnTime": 100
   },
 
   {
@@ -16,6 +17,7 @@
     "level": 2,
     "attackDamage": 3,
     "attackCooldown": 15,
-    "name": "Aggressive Mob"
+    "name": "Aggressive Mob",
+    "respawnTime": 100
   }
 ]

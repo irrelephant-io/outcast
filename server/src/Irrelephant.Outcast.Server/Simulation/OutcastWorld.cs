@@ -21,6 +21,7 @@ public class OutcastWorld : IDisposable
     private readonly IPositionTracker _positionTracker;
     private readonly EntitySpawner _entitySpawner;
 
+    private readonly CorpseDespawnSystem _corpseDespawnSystem;
     private readonly UpdateInterestSphereSystem _updateInterestSphereSystem;
     private readonly ProcessNetworkMessagesSystem _processNetworkMessagesSystem;
     private readonly JobScheduler _scheduler = new(
@@ -43,6 +44,7 @@ public class OutcastWorld : IDisposable
         _positionTracker = new NaivePositionTracker();
         _archetypeRegistry = new ArchetypeRegistry(logger, _storageReader);
         _entitySpawner = new EntitySpawner(_world, _archetypeRegistry, _positionTracker);
+        _corpseDespawnSystem = new CorpseDespawnSystem(_world, _positionTracker);
 
         _updateInterestSphereSystem = new UpdateInterestSphereSystem(_positionTracker);
         _processNetworkMessagesSystem = new ProcessNetworkMessagesSystem(_entitySpawner);
@@ -90,12 +92,17 @@ public class OutcastWorld : IDisposable
     public void Simulate()
     {
         NetworkHeartbeatSystem.Run(_world);
+        EntityStateUpdateSystem.RunEarlyUpdate(_world);
+        EntityHealthUpdateSystem.RunEarlyUpdate(_world);
+        _corpseDespawnSystem.Run();
         _updateInterestSphereSystem.RunEarlyUpdate(_world);
         _processNetworkMessagesSystem.Run(_world);
         ManageEntitiesInInterestSphereSystem.Run(_world);
         MoveCharactersSystem.Run(_world, 0.1f);
         AttackSystem.Run(_world);
         PassiveThinkerSystem.Run(_world, _positionTracker);
+        EntityHealthUpdateSystem.RunLateUpdate(_world);
+        EntityStateUpdateSystem.Run(_world);
         UpdateNetworkCharacterStatusSystem.Run(_world);
         _updateInterestSphereSystem.RunLateUpdate(_world);
         DeleteEntitiesSystem.Run(_world);

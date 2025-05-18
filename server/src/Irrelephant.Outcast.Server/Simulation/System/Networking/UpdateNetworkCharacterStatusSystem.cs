@@ -1,9 +1,11 @@
-﻿using Arch.Core;
+﻿using System.Diagnostics;
+using Arch.Core;
 using Arch.Core.Extensions;
 using Irrelephant.Outcast.Networking.Protocol.Abstractions.DataTransfer.Messages;
 using Irrelephant.Outcast.Server.Simulation.Components.Behavioral;
 using Irrelephant.Outcast.Server.Simulation.Components.Communication;
 using Irrelephant.Outcast.Server.Simulation.Components.Data;
+using Irrelephant.Outcast.Server.Simulation.Extensions;
 
 namespace Irrelephant.Outcast.Server.Simulation.System.Networking;
 
@@ -13,7 +15,7 @@ public static class UpdateNetworkCharacterStatusSystem
     {
         var allClients = new QueryDescription()
             .WithAll<ProtocolClient, GlobalId, Transform>()
-            .WithAny<Movement, Attack>();
+            .WithAny<Movement, Attack, Health, State>();
 
         world.Query(
             in allClients,
@@ -21,6 +23,8 @@ public static class UpdateNetworkCharacterStatusSystem
             {
                 ref var attack = ref entity.TryGetRef<Attack>(out var hasAttack);
                 ref var movement = ref entity.TryGetRef<Movement>(out var hasMovement);
+                ref var state = ref entity.TryGetRef<State>(out var hasState);
+                ref var health = ref entity.TryGetRef<Health>(out var hasHealth);
 
                 if (hasMovement)
                 {
@@ -32,28 +36,96 @@ public static class UpdateNetworkCharacterStatusSystem
                     SendOwnAttackUpdates(ref pc, ref attack, ref id);
                 }
 
+                if (hasState)
+                {
+                    SendStateUpdates(ref pc, ref state, ref id);
+                }
+
+                if (hasHealth)
+                {
+                    SendHealthUpdates(ref pc, ref health, ref id);
+                }
+
                 foreach (var entityWithin in pc.InterestSphere.EntitiesWithin)
                 {
+                    ref var entityWithinGid = ref entityWithin.TryGetRef<GlobalId>(out _);
                     ref var interestSphereMovement = ref entityWithin.TryGetRef<Movement>(
                         out var interestSphereHasMovement
                     );
+                    if (interestSphereHasMovement)
+                    {
+                        var entityWithinTransform = entityWithin.Get<Transform>();
+                        SendMoveUpdate(
+                            ref pc,
+                            ref interestSphereMovement,
+                            ref entityWithinGid,
+                            ref entityWithinTransform
+                        );
+                    }
+
                     ref var interestSphereAttack = ref entityWithin.TryGetRef<Attack>(
                         out var interestSphereHasAttack
                     );
-                    if (interestSphereHasMovement)
-                    {
-                        var components = entityWithin.Get<Transform, GlobalId>();
-                        SendMoveUpdate(ref pc, ref interestSphereMovement, ref components.t1, ref components.t0);
-                    }
-
                     if (interestSphereHasAttack)
                     {
-                        var gid = entityWithin.Get<GlobalId>();
-                        SendAttackUpdatesFromOthers(ref entity, ref pc, ref interestSphereAttack, ref gid);
+                        SendAttackUpdatesFromOthers(
+                            ref entity,
+                            ref pc,
+                            ref interestSphereAttack,
+                            ref entityWithinGid
+                        );
+                    }
+
+                    ref var interestSphereState = ref entityWithin.TryGetRef<State>(
+                        out var interestSphereHasState
+                    );
+                    if (interestSphereHasState)
+                    {
+                        SendStateUpdates(ref pc, ref interestSphereState, ref entityWithinGid);
+                    }
+
+                    if (!entityWithinGid.IsPlayer)
+                    {
+                        ref var interestSphereHealth = ref entityWithin.TryGetRef<Health>(out var interestSphereHasHealth);
+                        if (interestSphereHasHealth)
+                        {
+                            SendHealthUpdates(ref pc, ref interestSphereHealth, ref entityWithinGid);
+                        }
                     }
                 }
             }
         );
+    }
+
+    private static void SendHealthUpdates(
+        ref ProtocolClient protocolClient,
+        ref Health health,
+        ref GlobalId gid
+    )
+    {
+        if (health.HealthChangedThisTick)
+        {
+            protocolClient.Network.EnqueueOutboundMessage(new HealthNotification(gid.Id, health.CurrentHealth));
+        }
+    }
+
+    private static void SendStateUpdates(
+        ref ProtocolClient protocolClient,
+        ref State state,
+        ref GlobalId gid
+    )
+    {
+        if (state.EntityState.DidStateChange)
+        {
+            Message message = state.EntityState.Current switch
+            {
+                EntityState.Combat => new CombatStartNotification(gid.Id),
+                EntityState.Normal => new CombatEndNotification(gid.Id),
+                EntityState.Dead => new EntityDeathNotification(gid.Id),
+                _ => throw new UnreachableException()
+            };
+            protocolClient.Network.EnqueueOutboundMessage(message);
+        }
     }
 
     private static void SendMoveUpdate(
@@ -117,21 +189,10 @@ public static class UpdateNetworkCharacterStatusSystem
 
         foreach (var completedAttack in attack.CompletedAttacks)
         {
-            ref var entityHealth = ref completedAttack.Entity.TryGetRef<Health>(out var hasHealth);
             ref var targetGid = ref completedAttack.Entity.TryGetRef<GlobalId>(out _);
-
-            if (targetGid.IsPlayer || !hasHealth)
-            {
-                receiver.Network.EnqueueOutboundMessage(
-                    new SlimDamageNotification(targetGid.Id, completedAttack.Damage)
-                );
-            }
-            else
-            {
-                receiver.Network.EnqueueOutboundMessage(
-                    new DamageNotification(targetGid.Id, entityHealth.PercentHealth, id.Id, completedAttack.Damage)
-                );
-            }
+            receiver.Network.EnqueueOutboundMessage(
+                new DamageNotification(id.Id, targetGid.Id, completedAttack.Damage, SourceAbilityId: null)
+            );
         }
     }
 
@@ -155,17 +216,10 @@ public static class UpdateNetworkCharacterStatusSystem
                 continue;
             }
 
-            ref var entityHealth = ref completedAttack.Entity.TryGetRef<Health>(out _);
             ref var targetGid = ref completedAttack.Entity.TryGetRef<GlobalId>(out _);
 
             receiver.Network.EnqueueOutboundMessage(
-                new ExactDamageNotification(
-                    targetGid.Id,
-                    entityHealth.CurrentHealth,
-                    entityHealth.MaxHealth,
-                    id.Id,
-                    completedAttack.Damage
-                )
+                new DamageNotification(id.Id, targetGid.Id, completedAttack.Damage, null)
             );
         }
     }
