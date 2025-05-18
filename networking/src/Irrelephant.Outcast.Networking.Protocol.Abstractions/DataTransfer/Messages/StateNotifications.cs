@@ -30,4 +30,8 @@ public record CombatStartNotification(Guid EntityId) : Message;
 
 public record CombatEndNotification(Guid EntityId) : Message;
 
+public record IsInCombatNotification(Guid EntityId) : Message;
+
 public record EntityDeathNotification(Guid EntityId) : Message;
+
+public record IsDeadNotification(Guid EntityId) : Message;
