@@ -102,5 +102,19 @@ public class ProcessNetworkMessagesSystem(
                 gid.ArchetypeId
             )
         );
+
+        var movement = entity.Get<Movement>();
+        protocolClient.Network.EnqueueOutboundMessage(
+            new MovementSpeedNotification(gid.Id, movement.MoveSpeed)
+        );
+
+        var health = entity.Get<Health>();
+        protocolClient.Network.EnqueueOutboundMessage(
+            new MaxHealthNotification(gid.Id, health.MaxHealth)
+        );
+
+        protocolClient.Network.EnqueueOutboundMessage(
+            new ConnectTransferComplete(protocolClient.Network.SessionId)
+        );
     }
 }

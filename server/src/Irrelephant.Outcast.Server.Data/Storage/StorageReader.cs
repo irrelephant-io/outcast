@@ -13,12 +13,26 @@ public class StorageReader
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public async IAsyncEnumerable<PersistedEntity> ReadEntitiesAsync()
+    private static IEnumerable<Stream> GetResourceStreams(string resourceNamespace)
     {
-        foreach (var entityFile in Directory.EnumerateFiles("Entities/", "*.json", SearchOption.TopDirectoryOnly))
+        var assembly = typeof(StorageReader).Assembly;
+        return assembly
+            .GetManifestResourceNames()
+            .Where(it => it.StartsWith(resourceNamespace))
+            .Select(resource => assembly.GetManifestResourceStream(resource))
+            .Where(it => it is not null)!;
+    }
+
+    private async IAsyncEnumerable<TResource> ReadResources<TResource>(
+        string resourceNamespace
+    )
+    {
+        foreach (var entitiesFile in GetResourceStreams(resourceNamespace))
         {
-            await using FileStream stream = File.OpenRead(entityFile);
-            var result = await JsonSerializer.DeserializeAsync<PersistedEntity[]>(stream, _jsonSerializerOptions);
+            var result = await JsonSerializer.DeserializeAsync<TResource[]>(
+                entitiesFile,
+                _jsonSerializerOptions
+            );
             foreach (var entity in result!)
             {
                 yield return entity;
@@ -26,24 +40,13 @@ public class StorageReader
         }
     }
 
-    public async IAsyncEnumerable<EntityArchetype> ReadArchetypesAsync()
-    {
-        var allArchetypeFiles = Directory.EnumerateFiles(
-            "Entities/Archetypes/",
-            "*.json",
-            SearchOption.TopDirectoryOnly
-        );
+    const string EntitiesNamespace = "Irrelephant.Outcast.Server.Data.Resources.Entities";
+    public IAsyncEnumerable<PersistedEntity> ReadEntitiesAsync() =>
+        ReadResources<PersistedEntity>(EntitiesNamespace);
 
-        foreach (var archetypeFile in allArchetypeFiles)
-        {
-            await using FileStream stream = File.OpenRead(archetypeFile);
-            var result = await JsonSerializer.DeserializeAsync<EntityArchetype[]>(stream, _jsonSerializerOptions);
-            foreach (var archetype in result!)
-            {
-                yield return archetype;
-            }
-        }
-    }
+    const string ArchetypesNamespace = "Irrelephant.Outcast.Server.Data.Resources.Archetypes";
+    public IAsyncEnumerable<EntityArchetype> ReadArchetypesAsync() =>
+        ReadResources<EntityArchetype>(ArchetypesNamespace);
 }
 
 public class Vector3Converter : JsonConverter<Vector3>
