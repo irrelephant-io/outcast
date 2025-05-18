@@ -11,8 +11,6 @@
 
     <ItemGroup>
       <EmbeddedResource Include="Resources\Entities\entities.0.json" />
-      <None Remove="Entities\entities.0.json" />
-      <None Remove="Entities\Archetypes\mobs.0.json" />
       <EmbeddedResource Include="Resources\Archetypes\mobs.0.json" />
     </ItemGroup>
 

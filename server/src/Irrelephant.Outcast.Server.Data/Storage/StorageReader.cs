@@ -19,6 +19,7 @@ public class StorageReader
         return assembly
             .GetManifestResourceNames()
             .Where(it => it.StartsWith(resourceNamespace))
+            .OrderBy(it => it)
             .Select(resource => assembly.GetManifestResourceStream(resource))
             .Where(it => it is not null)!;
     }
