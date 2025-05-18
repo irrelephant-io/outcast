@@ -16,7 +16,7 @@ public record ConnectResponse(
 
 public record ConnectTransferComplete(
     Guid SessionId
-);
+) : Message;
 
 public record DisconnectNotification(
     Guid SessionId,
