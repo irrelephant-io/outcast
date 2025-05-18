@@ -35,3 +35,5 @@ public record IsInCombatNotification(Guid EntityId) : Message;
 public record EntityDeathNotification(Guid EntityId) : Message;
 
 public record IsDeadNotification(Guid EntityId) : Message;
+
+public record IsMovingNotification(Guid EntityId) : Message;
