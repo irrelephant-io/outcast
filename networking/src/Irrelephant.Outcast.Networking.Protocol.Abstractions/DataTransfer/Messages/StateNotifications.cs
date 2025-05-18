@@ -12,7 +12,12 @@ public record AttackWindupNotification(Guid EntityId) : Message;
 
 public record HealthNotification(Guid EntityId, int RemainingHealth) : Message;
 
-public record DamageNotification(Guid EntityId, int Damage) : Message;
+public record DamageNotification(
+    Guid DealerId,
+    Guid TargetId,
+    int Damage,
+    Guid? SourceAbilityId
+) : Message;
 
 public record EntityPositionNotification(
     Guid EntityId,
